@@ -1,0 +1,52 @@
+{% macro entry_card(entry) %}
+<article id="entry-{{ entry.id }}" class="stub {{ 'stub--watched' if entry.status == 'watched' else 'stub--wishlist' }}">
+  <div class="stub__poster">
+    {% if entry.poster_url %}
+      <img src="{{ entry.poster_url }}" alt="{{ entry.title }} poster" loading="lazy" />
+    {% else %}
+      <div class="stub__poster-placeholder" aria-hidden="true">{{ entry.title[:1]|upper }}</div>
+    {% endif %}
+    <span class="stub__stamp stub__stamp--{{ entry.status }}">
+      {{ 'Watched' if entry.status == 'watched' else 'Wishlist' }}
+    </span>
+  </div>
+
+  <div class="perforated-edge" aria-hidden="true"></div>
+
+  <div class="stub__body">
+    <div class="stub__type">
+      {{ {'movie': 'Film', 'tv': 'Series', 'anime': 'Anime'}[entry.media_type] }}{% if entry.year %} · {{ entry.year }}{% endif %}
+    </div>
+    <h3 class="stub__title">{{ entry.title }}</h3>
+    {% if entry.rating %}
+      <div class="stub__rating" aria-label="Rated {{ entry.rating }} out of 10">
+        {{ '★' * ((entry.rating + 1) // 2) }}
+        <span class="stub__rating-num">{{ entry.rating }}/10</span>
+      </div>
+    {% endif %}
+    {% if entry.notes %}<p class="stub__notes">{{ entry.notes }}</p>{% endif %}
+
+    <div class="stub__footer">
+      <span class="stub__date">
+        {% if entry.status == 'watched' and entry.date_watched %}
+          Watched {{ entry.date_watched[:10] }}
+        {% else %}
+          Added {{ entry.date_added[:10] }}
+        {% endif %}
+      </span>
+      <div class="stub__actions">
+        <form class="stub__action-form" method="post" action="{{ url_for('board.toggle_status', entry_id=entry.id) }}">
+          <button type="submit" class="stub__action-btn">
+            {{ 'Move to wishlist' if entry.status == 'watched' else 'Mark watched' }}
+          </button>
+        </form>
+        <a href="{{ url_for('board.edit_entry', entry_id=entry.id) }}" class="stub__action-btn">Edit</a>
+        <form class="stub__action-form" method="post" action="{{ url_for('board.delete_entry', entry_id=entry.id) }}"
+              onsubmit="return confirm('Remove \'{{ entry.title|e }}\' from your board?');">
+          <button type="submit" class="stub__action-btn stub__action-btn--quiet">Remove</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</article>
+{% endmacro %}

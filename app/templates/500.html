@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Something went wrong — WatchBoard{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card" style="text-align:center;">
+    <p class="auth-eyebrow">500</p>
+    <h1>Something went wrong</h1>
+    <p style="color: var(--stone); margin-bottom: 22px;">That's on us — please try again in a moment.</p>
+    <a href="{{ url_for('marketing.landing') }}" class="btn btn--primary">Back to WatchBoard</a>
+  </div>
+</div>
+{% endblock %}

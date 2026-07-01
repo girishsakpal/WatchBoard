@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="WatchBoard — a personal board for movies, TV shows, and anime you want to watch and have watched. Built by Girish D. Sakpal." />
+  <script>
+    // Applied before first paint so the page never flashes the wrong theme.
+    (function () {
+      try {
+        var saved = localStorage.getItem("watchboard-theme");
+        var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        if (theme === "dark") document.documentElement.setAttribute("data-theme", "dark");
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+  {% block extra_css %}{% endblock %}
+  <title>{% block title %}WatchBoard{% endblock %}</title>
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar__inner">
+      <a href="{{ url_for('board.dashboard') if current_user else url_for('marketing.landing') }}" class="navbar__brand">
+        <span class="navbar__brand-mark">WB</span>
+        <span class="navbar__brand-name">WatchBoard</span>
+      </a>
+      <nav class="navbar__links">
+        {% if current_user %}
+          <a href="{{ url_for('board.dashboard') }}" class="navbar__nav-link {{ 'navbar__nav-link--active' if request.endpoint == 'board.dashboard' }}">Board</a>
+          <a href="{{ url_for('board.insights') }}" class="navbar__nav-link {{ 'navbar__nav-link--active' if request.endpoint == 'board.insights' }}">Insights</a>
+        {% endif %}
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        {% if current_user %}
+          <span class="navbar__user">
+            <span class="navbar__user-avatar">{{ current_user.name[:1]|upper }}</span>
+            {% if current_user.is_owner %}<span class="navbar__owner-badge">Owner</span>{% endif %}
+            <span>{{ current_user.name }}</span>
+          </span>
+          <form method="post" action="{{ url_for('auth.logout') }}" style="display:inline">
+            <button type="submit" class="btn btn--ghost">Log out</button>
+          </form>
+        {% else %}
+          <a href="{{ url_for('auth.login_page') }}" class="btn btn--ghost">Log in</a>
+          <a href="{{ url_for('auth.signup_page') }}" class="btn btn--dark">Sign up</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-stack">
+        {% for category, message in messages %}
+          <div class="flash flash--{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+    (function () {
+      var btn = document.getElementById("theme-toggle");
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        var root = document.documentElement;
+        var isDark = root.getAttribute("data-theme") === "dark";
+        if (isDark) {
+          root.removeAttribute("data-theme");
+          localStorage.setItem("watchboard-theme", "light");
+        } else {
+          root.setAttribute("data-theme", "dark");
+          localStorage.setItem("watchboard-theme", "dark");
+        }
+      });
+    })();
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
