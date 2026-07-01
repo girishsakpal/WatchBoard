@@ -1,0 +1,276 @@
+/* =========================================================
+   WatchBoard — Design Tokens
+   Built by Girish D. Sakpal
+   ========================================================= */
+
+:root {
+  --ink:        #0F0E11;
+  --ink-soft:   #232027;
+  --paper:      #F5F1E8;
+  --paper-dim:  #ECE6D8;
+  --paper-flat: #FFFDF8;
+  --marquee:    #C9472B;
+  --marquee-dim:#A83A22;
+  --marquee-soft: rgba(201, 71, 43, 0.1);
+  --teal:       #2D6E5E;
+  --teal-dim:   #24574A;
+  --teal-soft:  rgba(45, 110, 94, 0.1);
+  --stone:      #8A8578;
+  --stone-line: #D9D2C2;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+  --radius-sm: 6px;
+  --radius-card: 10px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 0 rgba(15,14,17,0.04), 0 10px 28px -14px rgba(15,14,17,0.22);
+  --shadow-card-hover: 0 1px 0 rgba(15,14,17,0.05), 0 20px 40px -16px rgba(15,14,17,0.3);
+  --shadow-pop: 0 18px 48px -20px rgba(15,14,17,0.45);
+  --max-width: 1180px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  color-scheme: light;
+}
+
+/* ---------- Dark mode ----------
+   Toggled via [data-theme="dark"] on <html>, set by an inline script in
+   <head> (before paint, to avoid a flash) and flipped by the navbar
+   toggle button. Preference is remembered in localStorage. */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --ink:        #F2EFE8;
+  --ink-soft:   #D8D4C8;
+  --paper:      #131217;
+  --paper-dim:  #1B1A20;
+  --paper-flat: #1F1E24;
+  --marquee:    #E9704F;
+  --marquee-dim:#F08A65;
+  --marquee-soft: rgba(233, 112, 79, 0.14);
+  --teal:       #4FB89C;
+  --teal-dim:   #6BCBB2;
+  --teal-soft:  rgba(79, 184, 156, 0.14);
+  --stone:      #8B8779;
+  --stone-line: #322F37;
+  --shadow-card: 0 1px 0 rgba(0,0,0,0.2), 0 10px 28px -14px rgba(0,0,0,0.55);
+  --shadow-card-hover: 0 1px 0 rgba(0,0,0,0.25), 0 20px 40px -16px rgba(0,0,0,0.65);
+  --shadow-pop: 0 18px 48px -20px rgba(0,0,0,0.75);
+}
+
+* { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--font-body); cursor: pointer; }
+input, select, textarea { font-family: var(--font-body); }
+
+img { max-width: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--marquee);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection { background: var(--marquee); color: var(--paper); }
+
+.perforated-edge {
+  background-image: radial-gradient(circle, var(--paper) 2.5px, transparent 2.6px);
+  background-size: 14px 14px;
+  background-position: -2px center;
+  height: 6px;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 11px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.2s ease, background 0.15s ease, border-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.btn:active { transform: translateY(1px) scale(0.99); }
+.btn--primary {
+  background: var(--marquee);
+  color: var(--paper-flat);
+  box-shadow: 0 6px 16px -8px rgba(201, 71, 43, 0.55);
+}
+.btn--primary:hover { background: var(--marquee-dim); box-shadow: 0 8px 20px -8px rgba(201, 71, 43, 0.65); transform: translateY(-1px); }
+.btn--primary:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+.btn--ghost { background: transparent; color: var(--ink); border-color: var(--stone-line); }
+.btn--ghost:hover { border-color: var(--ink); background: rgba(15,14,17,0.03); }
+.btn--dark { background: var(--ink); color: var(--paper); }
+.btn--dark:hover { background: var(--ink-soft); transform: translateY(-1px); }
+.btn--full { width: 100%; }
+
+/* ---------- Navbar ---------- */
+.navbar {
+  border-bottom: 1px solid var(--stone-line);
+  background: rgba(245, 241, 232, 0.92);
+  backdrop-filter: saturate(140%) blur(8px);
+  -webkit-backdrop-filter: saturate(140%) blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.navbar__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  gap: 12px;
+}
+.navbar__brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.navbar__brand-mark {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.8rem;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 5px 7px;
+  border-radius: 5px;
+  letter-spacing: 0.04em;
+}
+.navbar__brand-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+.navbar__links { display: flex; align-items: center; gap: 10px; }
+.navbar__user {
+  font-size: 0.85rem;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--paper-dim);
+  border: 1px solid var(--stone-line);
+}
+.navbar__user-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.navbar__owner-badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--marquee);
+  color: var(--paper);
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+}
+.navbar__nav-link {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--stone);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.navbar__nav-link:hover { color: var(--ink); background: var(--paper-dim); }
+.navbar__nav-link--active { color: var(--ink); font-weight: 600; }
+
+/* ---------- Theme toggle ---------- */
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--stone-line);
+  background: var(--paper-dim);
+  color: var(--ink);
+  padding: 0;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+.theme-toggle:hover { border-color: var(--ink); transform: translateY(-1px); }
+.theme-toggle svg { width: 17px; height: 17px; }
+.theme-toggle .icon-moon { display: none; }
+html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+@media (max-width: 640px) {
+  .navbar__inner { padding: 12px 16px; }
+  .navbar__brand-name { display: none; }
+  .navbar__user span:not(.navbar__owner-badge):not(.navbar__user-avatar) { display: none; }
+  .navbar__user { padding: 6px; gap: 0; }
+  .btn { padding: 9px 14px; font-size: 0.82rem; }
+  .navbar__nav-link { padding: 8px; font-size: 0.78rem; }
+}
+
+/* ---------- Flash messages ---------- */
+.flash-stack {
+  max-width: var(--max-width);
+  margin: 16px auto 0;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.flash {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  border: 1px solid transparent;
+}
+.flash--error { background: var(--marquee-soft); color: var(--marquee-dim); border-color: rgba(201, 71, 43, 0.18); }
+.flash--success { background: var(--teal-soft); color: var(--teal-dim); border-color: rgba(45, 110, 94, 0.18); }
+
+@media (max-width: 480px) {
+  .flash-stack { padding: 0 16px; }
+}
