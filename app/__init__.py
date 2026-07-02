@@ -15,7 +15,7 @@ def create_app():
 
     if not os.environ.get("OWNER_USERNAME") or not os.environ.get("OWNER_PASSWORD"):
         print(
-            "WARNING: OWNER_USERNAME / OWNER_PASSWORD are not set, the personal "
+            "WARNING: OWNER_USERNAME / OWNER_PASSWORD are not set — the personal "
             "owner login will be disabled until they are."
         )
 
@@ -36,6 +36,14 @@ def create_app():
     def inject_current_user():
         from app.utils.current_user import get_current_user
         return {"current_user": get_current_user()}
+
+    @app.template_filter("dateonly")
+    def dateonly(value):
+        if not value:
+            return ""
+        if hasattr(value, "strftime"):
+            return value.strftime("%Y-%m-%d")
+        return str(value)[:10]
 
     @app.route("/healthz")
     def health():

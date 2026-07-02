@@ -29,9 +29,9 @@
     <div class="stub__footer">
       <span class="stub__date">
         {% if entry.status == 'watched' and entry.date_watched %}
-          Watched {{ entry.date_watched[:10] }}
+          Watched {{ entry.date_watched|dateonly }}
         {% else %}
-          Added {{ entry.date_added[:10] }}
+          Added {{ entry.date_added|dateonly }}
         {% endif %}
       </span>
       <div class="stub__actions">
