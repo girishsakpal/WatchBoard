@@ -1,3 +1,7 @@
+/* =========================================================
+   WatchBoard — Design Tokens
+   Built by Girish D. Sakpal
+   ========================================================= */
 
 :root {
   --ink:        #0F0E11;
@@ -165,14 +169,11 @@ img { max-width: 100%; }
 }
 .navbar__brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .navbar__brand-mark {
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: 0.8rem;
-  background: var(--ink);
-  color: var(--paper);
-  padding: 5px 7px;
-  border-radius: 5px;
-  letter-spacing: 0.04em;
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  flex-shrink: 0;
 }
 .navbar__brand-name {
   font-family: var(--font-display);
