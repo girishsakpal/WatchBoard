@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="WatchBoard, a personal board for movies, TV shows, and anime you want to watch and have watched. Built by Girish D. Sakpal." />
   <script>
+    // Applied before first paint so the page never flashes the wrong theme.
     (function () {
       try {
         var saved = localStorage.getItem("watchboard-theme");
@@ -13,6 +14,11 @@
       } catch (e) {}
     })();
   </script>
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon-32x32.png') }}" sizes="32x32" type="image/png" />
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon-16x16.png') }}" sizes="16x16" type="image/png" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" />
+  <meta name="theme-color" content="#4A5FB8" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
