@@ -1,28 +1,28 @@
 # WatchBoard
 
-A personal board for the movies, TV shows, and anime you want to watch — and the ones you already have. Server-rendered with Flask and Jinja2, fast, mobile-friendly, and built for one thing: keeping your watchlist actually organized.
+A personal board for the movies, TV shows, and anime you want to watch, and the ones you already have. Server-rendered with Flask and Jinja2, fast, mobile-friendly, and built for one thing: keeping your watchlist actually organized.
 
 Built by **Girish D. Sakpal**.
 
 ## Features
 
-- **Username-based accounts** — sign up and log in with a username and password, no email required.
-- **Two shelves** — every title lives on your Wishlist or in your Watched list.
-- **Search, filter, and sort** — filter by status or media type (film, series, anime), search titles instantly, and sort by name, date added, release year, or your rating.
-- **Optional TMDB lookup** — search The Movie Database while adding a title to auto-fill its poster, year, and overview (works without it too — you can add anything manually).
-- **Private by default** — every account's board is scoped to that account only.
-- **One owner account** — an optional "owner" login, configured purely through environment variables, with no database row of its own.
-- **Responsive UI** — a clean, modern interface that works just as well on a phone as it does on a desktop.
-- **Dark / light mode** — a persisted theme toggle in the navbar, applied before first paint to avoid a flash of the wrong theme.
-- **Insights dashboard** — a dedicated analytics page (`/board/insights`) that computes completion rate, average rating, rating distribution, genre breakdown, and month-over-month adding/watching activity from your own data, rendered with Chart.js.
+- **Username-based accounts:** sign up and log in with a username and password, no email required.
+- **Two shelves:** every title lives on your Wishlist or in your Watched list.
+- **Search, filter, and sort:** filter by status or media type (film, series, anime), search titles instantly, and sort by name, date added, release year, or your rating.
+- **Optional TMDB lookup:** search The Movie Database while adding a title to auto-fill its poster, year, and overview (works without it t:oo you can add anything manually).
+- **Private by default:** every account's board is scoped to that account only.
+- **One owner account:** an optional "owner" login, configured purely through environment variables, with no database row of its own.
+- **Responsive UI:** a clean, modern interface that works just as well on a phone as it does on a desktop.
+- **Dark / light mode:** a persisted theme toggle in the navbar, applied before first paint to avoid a flash of the wrong theme.
+- **Insights dashboard:** a dedicated analytics page (`/board/insights`) that computes completion rate, average rating, rating distribution, genre breakdown, and month-over-month adding/watching activity from your own data, rendered with Chart.js.
 
 ## Tech stack
 
 - **Backend:** Flask 3, Jinja2 templates
 - **Auth:** JWT stored in an httpOnly cookie, passwords hashed with bcrypt
-- **Database:** SQLite for local development, PostgreSQL in production — picked automatically from `DATABASE_URL`, using `psycopg` (v3)
+- **Database:** SQLite for local development, PostgreSQL in production, picked automatically from `DATABASE_URL`, using `psycopg` (v3)
 - **Rate limiting:** Flask-Limiter on auth endpoints
-- **Frontend:** Plain HTML/CSS/JS — no build step, no framework
+- **Frontend:** Plain HTML/CSS/JS
 
 ## Getting started
 
@@ -78,11 +78,11 @@ app/
 
 ## Authentication
 
-Accounts are created with a **username** (3–30 characters: letters, numbers, dots, underscores, or hyphens), a display name, and a password (minimum 8 characters). Passwords are hashed with bcrypt before storage. On login, a signed JWT is set as an httpOnly cookie and used to identify the user on every request — there's no server-side session store to manage.
+Accounts are created with a **username** (3–30 characters: letters, numbers, dots, underscores, or hyphens), a display name, and a password (minimum 8 characters). Passwords are hashed with bcrypt before storage. On login, a signed JWT is set as an httpOnly cookie and used to identify the user on every request, there's no server-side session store to manage.
 
 ## Deployment
 
-WatchBoard is designed to deploy cleanly to platforms like Render: set `DATABASE_URL` to a Postgres connection string, set `FLASK_ENV=production`, provide the required environment variables above, and run with `gunicorn run:app`. Postgres connectivity is provided by `psycopg` (v3) — no separate setup needed beyond installing `requirements.txt`.
+WatchBoard is designed to deploy cleanly to platforms like Render: set `DATABASE_URL` to a Postgres connection string, set `FLASK_ENV=production`, provide the required environment variables above, and run with `gunicorn run:app`. Postgres connectivity is provided by `psycopg` (v3), no separate setup needed beyond installing `requirements.txt`.
 
 ## License
 

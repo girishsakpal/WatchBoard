@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ 'Edit entry' if entry else 'Add to your board' }} — WatchBoard{% endblock %}
+{% block title %}{{ 'Edit entry' if entry else 'Add to your board' }} - WatchBoard{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/entry_form.css') }}" />{% endblock %}
 
 {% block content %}
@@ -43,11 +43,17 @@
 
     <div class="entry-form__row entry-form__row--split">
       <label>Poster URL
-        <input type="text" name="poster_url" id="field-poster_url" value="{{ entry.poster_url if entry and entry.poster_url else '' }}" placeholder="https://..." />
+        <input type="text" name="poster_url" id="field-poster_url" value="{{ entry.poster_url if entry and entry.poster_url else '' }}" placeholder="https://... (direct link to an image)" />
+        <span class="field-hint">Must link straight to an image file (.jpg, .png, .webp), a link to a webpage won't render.</span>
       </label>
       <label>Your rating (1–10)
         <input type="number" name="rating" value="{{ entry.rating if entry and entry.rating else '' }}" min="1" max="10" />
       </label>
+    </div>
+
+    <div class="poster-preview" id="poster-preview" hidden>
+      <img id="poster-preview-img" alt="Poster preview" />
+      <p class="poster-preview__status" id="poster-preview-status"></p>
     </div>
 
     <div class="entry-form__row">

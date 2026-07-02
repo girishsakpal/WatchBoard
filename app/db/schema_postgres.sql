@@ -1,4 +1,4 @@
--- WatchBoard schema (PostgreSQL — production)
+-- WatchBoard schema (PostgreSQL for production)
 -- Built by Girish D. Sakpal
 
 CREATE TABLE IF NOT EXISTS users (

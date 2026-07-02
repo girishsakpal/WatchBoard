@@ -146,7 +146,7 @@
 }
 .landing__logo-strip span:nth-child(even) { opacity: 0.45; }
 
-.landing__features { background: var(--ink); padding: 56px 24px; }
+.landing__features { background: #0F0E11; padding: 56px 24px; }
 .landing__features-inner {
   max-width: var(--max-width);
   margin: 0 auto;
@@ -171,12 +171,12 @@
 }
 .landing__feature h2 {
   font-family: var(--font-display);
-  color: var(--paper);
+  color: #F5F1E8;
   font-size: 1.35rem;
   margin: 0 0 10px;
 }
 .landing__feature p {
-  color: var(--paper);
+  color: #F5F1E8;
   opacity: 0.65;
   font-size: 0.92rem;
   line-height: 1.55;

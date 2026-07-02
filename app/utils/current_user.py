@@ -1,9 +1,4 @@
-"""
-get_current_user(): resolves the logged-in user (or None) from the
-request's cookie, without forcing a redirect. Used by the navbar (which
-needs to know "is someone logged in?" on every page, even public ones)
-and by views that want optional auth.
-"""
+
 import os
 import jwt as pyjwt
 from flask import request, g

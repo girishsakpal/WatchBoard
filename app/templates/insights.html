@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Insights — WatchBoard{% endblock %}
+{% block title %}Insights - WatchBoard{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/insights.css') }}" />{% endblock %}
 
 {% block content %}
@@ -8,7 +8,7 @@
     <div>
       <p class="insights__eyebrow">Board analytics</p>
       <h1>Your watching data, broken down.</h1>
-      <p class="insights__sub">A quick statistical read on what you're tracking — completion rate, genre mix, rating spread, and how your habits have moved month to month.</p>
+      <p class="insights__sub">A quick statistical read on what you're tracking, completion rate, genre mix, rating spread, and how your habits have moved month to month.</p>
     </div>
     <a href="{{ url_for('board.dashboard') }}" class="btn btn--ghost">← Back to board</a>
   </div>
@@ -33,12 +33,12 @@
     </div>
     <div class="kpi">
       <span class="kpi__label">Average rating</span>
-      <span class="kpi__value">{{ avg_rating if avg_rating is not none else '—' }}{% if avg_rating is not none %}<span class="kpi__unit">/10</span>{% endif %}</span>
+      <span class="kpi__value">{{ avg_rating if avg_rating is not none else '-' }}{% if avg_rating is not none %}<span class="kpi__unit">/10</span>{% endif %}</span>
       <span class="kpi__note">across {{ rated_count }} rated title{{ '' if rated_count == 1 else 's' }}</span>
     </div>
     <div class="kpi">
       <span class="kpi__label">Avg. time to watch</span>
-      <span class="kpi__value">{{ avg_days_to_watch if avg_days_to_watch is not none else '—' }}{% if avg_days_to_watch is not none %}<span class="kpi__unit">d</span>{% endif %}</span>
+      <span class="kpi__value">{{ avg_days_to_watch if avg_days_to_watch is not none else '-' }}{% if avg_days_to_watch is not none %}<span class="kpi__unit">d</span>{% endif %}</span>
       <span class="kpi__note">from add date to watched date</span>
     </div>
   </div>

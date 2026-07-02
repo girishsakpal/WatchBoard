@@ -2,10 +2,10 @@
 <article id="entry-{{ entry.id }}" class="stub {{ 'stub--watched' if entry.status == 'watched' else 'stub--wishlist' }}">
   <div class="stub__poster">
     {% if entry.poster_url %}
-      <img src="{{ entry.poster_url }}" alt="{{ entry.title }} poster" loading="lazy" />
-    {% else %}
-      <div class="stub__poster-placeholder" aria-hidden="true">{{ entry.title[:1]|upper }}</div>
+      <img src="{{ entry.poster_url }}" alt="{{ entry.title }} poster" loading="lazy"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
     {% endif %}
+    <div class="stub__poster-placeholder" aria-hidden="true" {% if entry.poster_url %}style="display:none"{% endif %}>{{ entry.title[:1]|upper }}</div>
     <span class="stub__stamp stub__stamp--{{ entry.status }}">
       {{ 'Watched' if entry.status == 'watched' else 'Wishlist' }}
     </span>

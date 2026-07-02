@@ -78,6 +78,28 @@
 .entry-form__row--split { flex-direction: row; gap: 12px; }
 .entry-form__row--split label { flex: 1; min-width: 0; }
 .entry-form label { display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem; font-weight: 500; color: var(--stone); }
+.field-hint { font-size: 0.7rem; font-weight: 400; color: var(--stone); opacity: 0.85; line-height: 1.4; }
+
+.poster-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px dashed var(--stone-line);
+  border-radius: var(--radius-sm);
+  background: var(--paper-dim);
+  margin-top: -4px;
+}
+.poster-preview img {
+  width: 54px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: var(--ink);
+  flex-shrink: 0;
+}
+.poster-preview__status { font-size: 0.78rem; color: var(--stone); margin: 0; line-height: 1.4; }
+.poster-preview__status--error { color: var(--marquee); }
 .entry-form input, .entry-form select, .entry-form textarea {
   padding: 10px 11px;
   border: 1px solid var(--stone-line);

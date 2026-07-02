@@ -125,7 +125,7 @@
 }
 .stub:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); }
 
-.stub__poster { position: relative; aspect-ratio: 2 / 3; background: var(--ink); overflow: hidden; }
+.stub__poster { position: relative; aspect-ratio: 2 / 3; background: #0F0E11; overflow: hidden; }
 .stub__poster img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
 .stub:hover .stub__poster img { transform: scale(1.04); }
 .stub__poster-placeholder {
@@ -137,8 +137,8 @@
   font-family: var(--font-display);
   font-size: 3.5rem;
   font-weight: 600;
-  color: var(--stone);
-  background: linear-gradient(160deg, #1b1a1f, var(--ink));
+  color: #8A8578;
+  background: linear-gradient(160deg, #1b1a1f, #0F0E11);
 }
 
 .stub__stamp {

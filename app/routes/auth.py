@@ -18,17 +18,11 @@ COOKIE_MAX_AGE = int(timedelta(days=7).total_seconds())
 
 
 def _cookie_kwargs():
-    # NOTE: when FLASK_ENV=production, the cookie is marked Secure, which
-    # means browsers refuse to send it back over plain http://. This is
-    # correct and required in production (Render serves real HTTPS). If
-    # you ever set FLASK_ENV=production locally over plain HTTP, login
-    # will appear not to "stick" — that's this flag, not a bug. Use the
-    # default FLASK_ENV=development for local testing.
     is_prod = os.environ.get("FLASK_ENV") == "production"
     return {
         "httponly": True,
         "secure": is_prod,
-        "samesite": "Lax",  # server-rendered app, same-origin only — no need for None
+        "samesite": "Lax",
         "max_age": COOKIE_MAX_AGE,
         "path": "/",
     }
@@ -77,7 +71,7 @@ def signup_page():
     token = sign_token({"user_id": new_id, "is_owner": False})
     resp = make_response(redirect(url_for("board.dashboard")))
     resp.set_cookie("token", token, **_cookie_kwargs())
-    flash(f"Welcome, {name} — your board is ready.", "success")
+    flash(f"Welcome, {name}, your board is ready.", "success")
     return resp
 
 

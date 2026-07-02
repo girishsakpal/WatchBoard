@@ -1,7 +1,3 @@
-/* =========================================================
-   WatchBoard — Design Tokens
-   Built by Girish D. Sakpal
-   ========================================================= */
 
 :root {
   --ink:        #0F0E11;
@@ -17,6 +13,9 @@
   --teal-soft:  rgba(45, 110, 94, 0.1);
   --stone:      #8A8578;
   --stone-line: #D9D2C2;
+
+  --navbar-bg: rgba(245, 241, 232, 0.92);
+  --scrim-soft: rgba(15, 14, 17, 0.03);
 
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -59,6 +58,10 @@ html[data-theme="dark"] {
   --teal-soft:  rgba(79, 184, 156, 0.14);
   --stone:      #8B8779;
   --stone-line: #322F37;
+
+  --navbar-bg: rgba(19, 18, 23, 0.86);
+  --scrim-soft: rgba(255, 255, 255, 0.05);
+
   --shadow-card: 0 1px 0 rgba(0,0,0,0.2), 0 10px 28px -14px rgba(0,0,0,0.55);
   --shadow-card-hover: 0 1px 0 rgba(0,0,0,0.25), 0 20px 40px -16px rgba(0,0,0,0.65);
   --shadow-pop: 0 18px 48px -20px rgba(0,0,0,0.75);
@@ -136,7 +139,7 @@ img { max-width: 100%; }
 .btn--primary:hover { background: var(--marquee-dim); box-shadow: 0 8px 20px -8px rgba(201, 71, 43, 0.65); transform: translateY(-1px); }
 .btn--primary:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
 .btn--ghost { background: transparent; color: var(--ink); border-color: var(--stone-line); }
-.btn--ghost:hover { border-color: var(--ink); background: rgba(15,14,17,0.03); }
+.btn--ghost:hover { border-color: var(--ink); background: var(--scrim-soft); }
 .btn--dark { background: var(--ink); color: var(--paper); }
 .btn--dark:hover { background: var(--ink-soft); transform: translateY(-1px); }
 .btn--full { width: 100%; }
@@ -144,7 +147,7 @@ img { max-width: 100%; }
 /* ---------- Navbar ---------- */
 .navbar {
   border-bottom: 1px solid var(--stone-line);
-  background: rgba(245, 241, 232, 0.92);
+  background: var(--navbar-bg);
   backdrop-filter: saturate(140%) blur(8px);
   -webkit-backdrop-filter: saturate(140%) blur(8px);
   position: sticky;

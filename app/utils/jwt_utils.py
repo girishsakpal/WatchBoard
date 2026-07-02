@@ -1,7 +1,4 @@
-"""
-JWT helpers. Fails loudly at import time if JWT_SECRET is missing,
-rather than silently signing tokens with an empty/default secret.
-"""
+
 import os
 import datetime
 import jwt

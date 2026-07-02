@@ -1,6 +1,4 @@
-// Title search-as-you-type for the add-entry form. Calls the small JSON
-// API at /api/titles/search (the one part of this app that isn't plain
-// HTML forms) and fills in the form fields when a result is picked.
+
 (function () {
   const searchInput = document.getElementById('title-search');
   if (!searchInput) return; // not present on the edit form
@@ -90,4 +88,45 @@
     searchInput.value = '';
     statusEl.textContent = '';
   }
+})();
+
+(function () {
+  const input = document.getElementById('field-poster_url');
+  const preview = document.getElementById('poster-preview');
+  const previewImg = document.getElementById('poster-preview-img');
+  const previewStatus = document.getElementById('poster-preview-status');
+  if (!input || !preview) return;
+
+  let debounceTimer = null;
+
+  function checkPoster() {
+    const url = input.value.trim();
+    if (!url) {
+      preview.hidden = true;
+      return;
+    }
+    preview.hidden = false;
+    previewStatus.textContent = 'Loading preview…';
+    previewStatus.classList.remove('poster-preview__status--error');
+    previewImg.style.display = 'none';
+    previewImg.src = url;
+  }
+
+  previewImg.addEventListener('load', () => {
+    previewImg.style.display = 'block';
+    previewStatus.textContent = '';
+  });
+  previewImg.addEventListener('error', () => {
+    previewImg.style.display = 'none';
+    previewStatus.textContent = "Couldn't load an image from that link, check it points straight to a .jpg/.png/.webp file, not a webpage.";
+    previewStatus.classList.add('poster-preview__status--error');
+  });
+
+  input.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(checkPoster, 400);
+  });
+
+  // Show a preview immediately when editing an entry that already has one.
+  if (input.value.trim()) checkPoster();
 })();

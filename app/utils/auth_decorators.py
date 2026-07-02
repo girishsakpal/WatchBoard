@@ -1,14 +1,4 @@
-"""
-require_auth: reads the httpOnly `token` cookie, verifies it, and stashes
-the decoded payload on flask.g.user for the view to use.
 
-Since this app is server-rendered (Jinja2, not a JSON SPA), an
-unauthenticated visit to a protected page should redirect to /login —
-not return a bare 401 the browser can't do anything with. The one
-exception is /api/titles/search, which is called via fetch() from a
-page's own JavaScript and genuinely wants JSON back; pass
-json_response=True for those.
-"""
 from functools import wraps
 import jwt as pyjwt
 from flask import request, redirect, url_for, flash, jsonify, g

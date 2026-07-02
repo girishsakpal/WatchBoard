@@ -20,9 +20,6 @@ ALLOWED_SORTS = {
     "year_desc": "year DESC",
     "rating_desc": "rating DESC",
 }
-# Postgres doesn't understand SQLite's "COLLATE NOCASE" — swap it in for
-# that backend specifically so alphabetical sort stays case-insensitive
-# on both engines without branching every call site.
 ALLOWED_SORTS_POSTGRES = {
     "title_asc": "LOWER(title) ASC",
     "title_desc": "LOWER(title) DESC",
@@ -264,14 +261,6 @@ def delete_entry(entry_id):
     flash(f'"{title}" removed from your board.', "success")
     return redirect(url_for("board.dashboard"))
 
-
-# ---------------------------------------------------------------------------
-# Insights — a lightweight analytics layer over the user's own board data.
-# Everything below reads already-fetched rows in Python rather than pushing
-# aggregation into SQL, since date columns come back as strings on SQLite
-# and as native datetimes on Postgres; normalizing once here keeps the
-# route backend-agnostic without branching every query.
-# ---------------------------------------------------------------------------
 
 MEDIA_LABELS = {"movie": "Film", "tv": "Series", "anime": "Anime"}
 

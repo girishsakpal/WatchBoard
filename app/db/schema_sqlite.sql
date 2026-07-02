@@ -1,4 +1,4 @@
--- WatchBoard schema (SQLite — local development)
+-- WatchBoard schema (SQLite for local development)
 -- Built by Girish D. Sakpal
 
 CREATE TABLE IF NOT EXISTS users (
