@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit entry' if entry else 'Add to your board' }} — WatchBoard{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/entry_form.css') }}" />{% endblock %}
+
+{% block content %}
+<div class="entry-form-page">
+  <h1>{{ 'Edit entry' if entry and entry.id else 'Add to your board' }}</h1>
+
+  {% if tmdb_enabled and (not entry or not entry.id) %}
+    <div class="form-search">
+      <label for="title-search">Search for a title (optional)</label>
+      <input id="title-search" type="text" placeholder="Start typing a movie or show name..." autocomplete="off" />
+      <p class="form-search__status" id="search-status"></p>
+      <ul class="form-search__results" id="search-results" hidden></ul>
+    </div>
+  {% endif %}
+
+  <form method="post" action="{{ action_url }}" class="entry-form" id="entry-form">
+    <div class="entry-form__row">
+      <label>Title
+        <input type="text" name="title" id="field-title" value="{{ entry.title if entry else '' }}" required />
+      </label>
+    </div>
+
+    <div class="entry-form__row entry-form__row--split">
+      <label>Type
+        <select name="media_type" id="field-media_type">
+          <option value="movie" {{ 'selected' if entry and entry.media_type == 'movie' }}>Film</option>
+          <option value="tv" {{ 'selected' if entry and entry.media_type == 'tv' }}>Series</option>
+          <option value="anime" {{ 'selected' if entry and entry.media_type == 'anime' }}>Anime</option>
+        </select>
+      </label>
+      <label>Status
+        <select name="status">
+          <option value="wishlist" {{ 'selected' if not entry or entry.status == 'wishlist' }}>Wishlist</option>
+          <option value="watched" {{ 'selected' if entry and entry.status == 'watched' }}>Watched</option>
+        </select>
+      </label>
+      <label>Year
+        <input type="number" name="year" id="field-year" value="{{ entry.year if entry and entry.year else '' }}" min="1900" max="2100" />
+      </label>
+    </div>
+
+    <div class="entry-form__row entry-form__row--split">
+      <label>Poster URL
+        <input type="text" name="poster_url" id="field-poster_url" value="{{ entry.poster_url if entry and entry.poster_url else '' }}" placeholder="https://..." />
+      </label>
+      <label>Your rating (1–10)
+        <input type="number" name="rating" value="{{ entry.rating if entry and entry.rating else '' }}" min="1" max="10" />
+      </label>
+    </div>
+
+    <div class="entry-form__row">
+      <label>Genres
+        <input type="text" name="genres" value="{{ entry.genres if entry and entry.genres else '' }}" placeholder="Sci-fi, Drama" />
+      </label>
+    </div>
+
+    <div class="entry-form__row">
+      <label>Notes
+        <textarea name="notes" id="field-overview" rows="3" placeholder="Anything you want to remember about this one...">{{ entry.notes if entry and entry.notes else '' }}</textarea>
+      </label>
+    </div>
+
+    <input type="hidden" name="tmdb_id" id="field-tmdb_id" value="{{ entry.tmdb_id if entry and entry.tmdb_id else '' }}" />
+
+    <div class="entry-form__actions">
+      <a href="{{ url_for('board.dashboard') }}" class="btn btn--ghost">Cancel</a>
+      <button type="submit" class="btn btn--primary">{{ 'Save changes' if entry and entry.id else 'Add entry' }}</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/entry_form.js') }}"></script>
+{% endblock %}

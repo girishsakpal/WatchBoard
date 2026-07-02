@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% from "_entry_card.html" import entry_card %}
+{% block title %}Your board — WatchBoard{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+  <div class="dashboard__header">
+    <div>
+      <p class="dashboard__eyebrow">Your board</p>
+      <h1>Welcome back{% if current_user %}, {{ current_user.name.split(' ')[0] }}{% endif %}.</h1>
+    </div>
+    <div class="dashboard__header-actions">
+      <a href="{{ url_for('board.insights') }}" class="btn btn--ghost">📊 Insights</a>
+      <a href="{{ url_for('board.new_entry') }}" class="btn btn--primary">+ Add entry</a>
+    </div>
+  </div>
+
+  <div class="dashboard__stat-strip">
+    <div class="dashboard__stat">
+      <span class="dashboard__stat-value">{{ counts.total }}</span>
+      <span class="dashboard__stat-label">Total titles</span>
+    </div>
+    <div class="dashboard__stat dashboard__stat--marquee">
+      <span class="dashboard__stat-value">{{ counts.wishlist }}</span>
+      <span class="dashboard__stat-label">On wishlist</span>
+    </div>
+    <div class="dashboard__stat dashboard__stat--teal">
+      <span class="dashboard__stat-value">{{ counts.watched }}</span>
+      <span class="dashboard__stat-label">Watched</span>
+    </div>
+    <div class="dashboard__stat">
+      <span class="dashboard__stat-value">{{ (counts.watched / counts.total * 100) | round | int if counts.total else 0 }}<small>%</small></span>
+      <span class="dashboard__stat-label">Completion</span>
+    </div>
+  </div>
+
+  <form method="get" action="{{ url_for('board.dashboard') }}" class="dashboard__controls" id="filter-form">
+    <input
+      type="search" name="q" class="dashboard__search"
+      placeholder="Search your titles..." value="{{ q }}"
+      aria-label="Search titles"
+    />
+
+    <div class="dashboard__tabs" role="tablist" aria-label="Filter by status">
+      <a href="{{ url_for('board.dashboard', q=q, media_type=media_type, sort=sort) }}"
+         class="dashboard__tab {{ 'dashboard__tab--active' if not status }}">All</a>
+      <a href="{{ url_for('board.dashboard', q=q, status='wishlist', media_type=media_type, sort=sort) }}"
+         class="dashboard__tab {{ 'dashboard__tab--active' if status == 'wishlist' }}">Wishlist</a>
+      <a href="{{ url_for('board.dashboard', q=q, status='watched', media_type=media_type, sort=sort) }}"
+         class="dashboard__tab {{ 'dashboard__tab--active' if status == 'watched' }}">Watched</a>
+    </div>
+    <input type="hidden" name="status" value="{{ status }}" />
+
+    <select name="media_type" aria-label="Filter by type" onchange="document.getElementById('filter-form').submit()">
+      <option value="" {{ 'selected' if not media_type }}>All types</option>
+      <option value="movie" {{ 'selected' if media_type == 'movie' }}>Films</option>
+      <option value="tv" {{ 'selected' if media_type == 'tv' }}>Series</option>
+      <option value="anime" {{ 'selected' if media_type == 'anime' }}>Anime</option>
+    </select>
+
+    <select name="sort" aria-label="Sort entries" onchange="document.getElementById('filter-form').submit()">
+      <option value="title_asc" {{ 'selected' if sort == 'title_asc' }}>Title, A → Z</option>
+      <option value="title_desc" {{ 'selected' if sort == 'title_desc' }}>Title, Z → A</option>
+      <option value="date_added_desc" {{ 'selected' if sort == 'date_added_desc' }}>Recently added</option>
+      <option value="date_added_asc" {{ 'selected' if sort == 'date_added_asc' }}>Oldest added</option>
+      <option value="year_desc" {{ 'selected' if sort == 'year_desc' }}>Release year</option>
+      <option value="rating_desc" {{ 'selected' if sort == 'rating_desc' }}>Your rating</option>
+    </select>
+  </form>
+
+  {% if entries|length == 0 %}
+    <div class="dashboard__empty">
+      <p>
+        {% if q or status or media_type %}
+          Nothing matches those filters yet.
+        {% else %}
+          Your board is empty. Add the first title you've been meaning to watch.
+        {% endif %}
+      </p>
+    </div>
+  {% else %}
+    <div class="dashboard__grid">
+      {% for entry in entries %}{{ entry_card(entry) }}{% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

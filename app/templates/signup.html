@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Sign up — WatchBoard{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <p class="auth-eyebrow">Start fresh</p>
+    <h1>Create your board</h1>
+
+    <form method="post" action="{{ url_for('auth.signup_page') }}" class="auth-form">
+      <label>
+        Name
+        <input type="text" name="name" value="{{ name or '' }}" required autocomplete="name" autofocus />
+      </label>
+      <label>
+        Username
+        <input type="text" name="username" value="{{ username or '' }}" required autocomplete="username" minlength="3" maxlength="30" pattern="[a-zA-Z0-9._-]+" />
+        <span class="auth-hint">3-30 characters. Letters, numbers, dots, underscores, or hyphens.</span>
+      </label>
+      <label>
+        Password
+        <input type="password" name="password" required autocomplete="new-password" minlength="8" />
+        <span class="auth-hint">At least 8 characters.</span>
+      </label>
+      <button type="submit" class="btn btn--primary">Create account</button>
+    </form>
+
+    <p class="auth-switch">Already have an account? <a href="{{ url_for('auth.login_page') }}">Log in</a></p>
+  </div>
+</div>
+{% endblock %}
