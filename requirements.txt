@@ -5,4 +5,4 @@ bcrypt==4.2.0
 python-dotenv==1.0.1
 requests==2.32.3
 gunicorn==22.0.0
-psycopg[binary]==3.2.3
+psycopg[binary]==3.2.10
