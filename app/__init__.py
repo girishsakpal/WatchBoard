@@ -15,7 +15,7 @@ def create_app():
 
     if not os.environ.get("OWNER_USERNAME") or not os.environ.get("OWNER_PASSWORD"):
         print(
-            "WARNING: OWNER_USERNAME / OWNER_PASSWORD are not set — the personal "
+            "WARNING: OWNER_USERNAME / OWNER_PASSWORD are not set, the personal "
             "owner login will be disabled until they are."
         )
 

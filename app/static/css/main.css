@@ -1,5 +1,5 @@
 /* =========================================================
-   WatchBoard — Design Tokens
+   WatchBoard - Design Tokens
    Built by Girish D. Sakpal
    ========================================================= */
 
@@ -164,6 +164,8 @@ img { max-width: 100%; }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  row-gap: 8px;
   padding: 14px 24px;
   gap: 12px;
 }
@@ -180,7 +182,7 @@ img { max-width: 100%; }
   font-weight: 600;
   font-size: 1.2rem;
 }
-.navbar__links { display: flex; align-items: center; gap: 10px; }
+.navbar__links { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 10px; row-gap: 8px; }
 .navbar__user {
   font-size: 0.85rem;
   color: var(--ink);
@@ -249,12 +251,20 @@ html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
 html[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
 
 @media (max-width: 640px) {
-  .navbar__inner { padding: 12px 16px; }
+  .navbar__inner { padding: 10px 16px; }
   .navbar__brand-name { display: none; }
   .navbar__user span:not(.navbar__owner-badge):not(.navbar__user-avatar) { display: none; }
   .navbar__user { padding: 6px; gap: 0; }
   .btn { padding: 9px 14px; font-size: 0.82rem; }
   .navbar__nav-link { padding: 8px; font-size: 0.78rem; }
+}
+
+@media (max-width: 400px) {
+  .navbar__links { gap: 6px; }
+  .navbar__owner-badge { display: none; }
+  .theme-toggle { width: 32px; height: 32px; }
+  .btn { padding: 8px 12px; font-size: 0.78rem; }
+  .navbar__nav-link { padding: 6px 8px; font-size: 0.74rem; }
 }
 
 /* ---------- Flash messages ---------- */
