@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Owner panel — WatchBoard{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/owner_panel.css') }}" />{% endblock %}
+
+{% block content %}
+<div class="owner-panel">
+  <div class="owner-panel__header">
+    <div>
+      <p class="owner-panel__eyebrow">Owner only</p>
+      <h1>Who's using WatchBoard.</h1>
+      <p class="owner-panel__sub">Every account that's signed up, with when they were last active on the board.</p>
+    </div>
+    <div class="owner-panel__online-badge">
+      <span class="owner-panel__online-dot"></span>
+      {{ online_count }} online now
+    </div>
+  </div>
+
+  {% if users %}
+    <div class="owner-panel__table">
+      <div class="owner-panel__row owner-panel__row--head">
+        <span>User</span>
+        <span>Username</span>
+        <span>Joined</span>
+        <span>Last active</span>
+      </div>
+      {% for u in users %}
+        <div class="owner-panel__row">
+          <span class="owner-panel__user">
+            <span class="owner-panel__avatar">{{ u.name[:1]|upper }}</span>
+            {{ u.name }}
+            {% if u.online_now %}<span class="owner-panel__live-dot" title="Active in the last 5 minutes"></span>{% endif %}
+          </span>
+          <span class="owner-panel__username">@{{ u.username }}</span>
+          <span class="owner-panel__muted">{{ u.created_at|dateonly }}</span>
+          <span class="{{ 'owner-panel__active' if u.online_now else 'owner-panel__muted' }}">{{ u._last_active_dt|relative_time }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="owner-panel__empty">No one's signed up yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

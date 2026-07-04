@@ -101,6 +101,23 @@ def get_db():
         conn.close()
 
 
+def _ensure_last_active_column(db, backend):
+    """Added after the initial release. Migrated here in Python (rather than
+    the schema .sql files, which only ever CREATE TABLE IF NOT EXISTS) so
+    databases that already exist in production — Render's SQLite disk, a
+    Supabase Postgres instance, whatever — pick up the new column on their
+    next boot with no manual migration step."""
+    if backend == "sqlite":
+        rows, _ = db.execute("PRAGMA table_info(users)")
+        existing_columns = {row["name"] for row in rows}
+        if "last_active_at" not in existing_columns:
+            db._conn.execute("ALTER TABLE users ADD COLUMN last_active_at TEXT")
+    else:
+        cur = db._conn.cursor()
+        cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS last_active_at TIMESTAMPTZ")
+        cur.close()
+
+
 def init_schema():
     backend = _resolve_backend()
     schema_file = "schema_sqlite.sql" if backend == "sqlite" else "schema_postgres.sql"
@@ -115,3 +132,4 @@ def init_schema():
             cur = db._conn.cursor()
             cur.execute(schema_sql)
             cur.close()
+        _ensure_last_active_column(db, backend)
