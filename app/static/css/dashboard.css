@@ -169,6 +169,22 @@
 .stub__title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; line-height: 1.25; margin: 0; }
 .stub__rating { color: var(--marquee); font-size: 0.85rem; display: flex; align-items: center; gap: 6px; }
 .stub__rating-num { font-family: var(--font-mono); color: var(--stone); font-size: 0.7rem; }
+
+/* Half-star rating: two stacked copies of the same glyph per slot - a
+   greyed-out full star underneath, and a colored one on top clipped to
+   0/50/100% width. Works with plain text glyphs, no icon font needed. */
+.star-rating { display: inline-flex; gap: 1px; line-height: 1; }
+.star-slot { position: relative; display: inline-block; width: 1em; height: 1em; }
+.star-slot__empty, .star-slot__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1em;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.star-slot__empty { color: var(--stone-line); }
+.star-slot__fill { color: var(--marquee); }
 .stub__notes {
   font-size: 0.85rem;
   opacity: 0.75;

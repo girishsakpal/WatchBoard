@@ -102,11 +102,6 @@ def get_db():
 
 
 def _ensure_last_active_column(db, backend):
-    """Added after the initial release. Migrated here in Python (rather than
-    the schema .sql files, which only ever CREATE TABLE IF NOT EXISTS) so
-    databases that already exist in production — Render's SQLite disk, a
-    Supabase Postgres instance, whatever — pick up the new column on their
-    next boot with no manual migration step."""
     if backend == "sqlite":
         rows, _ = db.execute("PRAGMA table_info(users)")
         existing_columns = {row["name"] for row in rows}

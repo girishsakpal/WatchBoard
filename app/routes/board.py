@@ -264,6 +264,14 @@ def delete_entry(entry_id):
 
 MEDIA_LABELS = {"movie": "Film", "tv": "Series", "anime": "Anime"}
 
+# Fixed drawing area for the activity line chart's SVG viewBox. Precomputing
+# the point coordinates here (rather than in JS via a charting library)
+# means the chart has zero external dependencies and can never fail to
+# render because a CDN script didn't load.
+CHART_W = 100
+CHART_H = 36
+CHART_PAD_TOP = 3
+
 
 def _to_datetime(value):
     """Normalize a SQLite date string or a Postgres datetime/date into a
@@ -284,6 +292,21 @@ def _month_key(dt):
     return f"{dt.year:04d}-{dt.month:02d}" if dt else None
 
 
+def _line_points(values, max_value):
+    """SVG polyline `points` string for a series, scaled into CHART_W x CHART_H."""
+    n = len(values)
+    if n <= 1 or max_value <= 0:
+        return ""
+    step = CHART_W / (n - 1)
+    usable_h = CHART_H - CHART_PAD_TOP
+    coords = []
+    for i, v in enumerate(values):
+        x = round(i * step, 2)
+        y = round(CHART_PAD_TOP + usable_h * (1 - (v / max_value)), 2)
+        coords.append(f"{x},{y}")
+    return " ".join(coords)
+
+
 @bp.route("/insights")
 @require_auth()
 def insights():
@@ -302,12 +325,14 @@ def insights():
         {"key": k, "label": MEDIA_LABELS.get(k, k), "count": media_counts.get(k, 0)}
         for k in ("movie", "tv", "anime")
     ]
+    max_media_count = max((d["count"] for d in media_breakdown), default=0)
 
     # --- Ratings: average + 1-10 histogram ---
     ratings = [r["rating"] for r in rows if r["rating"]]
     avg_rating = round(sum(ratings) / len(ratings), 1) if ratings else None
     rating_hist = Counter(ratings)
     rating_distribution = [rating_hist.get(i, 0) for i in range(1, 11)]
+    max_rating_count = max(rating_distribution, default=0)
 
     # --- Genres: free-text, comma/slash separated ---
     genre_counter = Counter()
@@ -341,6 +366,9 @@ def insights():
     month_labels = [datetime.strptime(mo, "%Y-%m").strftime("%b") for mo in months]
     max_monthly = max(monthly_added + monthly_watched or [0])
 
+    activity_added_points = _line_points(monthly_added, max_monthly)
+    activity_watched_points = _line_points(monthly_watched, max_monthly)
+
     # --- Average time from adding to watching ---
     lead_times = []
     for r in watched_rows:
@@ -352,9 +380,10 @@ def insights():
                 lead_times.append(delta_days)
     avg_days_to_watch = round(sum(lead_times) / len(lead_times)) if lead_times else None
 
-    top_rated = sorted(
+    rated_rows = sorted(
         [r for r in rows if r["rating"]], key=lambda r: r["rating"], reverse=True
-    )[:5]
+    )
+    top_rated = rated_rows[:5]
 
     return render_template(
         "insights.html",
@@ -363,15 +392,22 @@ def insights():
         wishlist_count=len(wishlist_rows),
         completion_rate=completion_rate,
         media_breakdown=media_breakdown,
+        max_media_count=max_media_count,
         avg_rating=avg_rating,
         rated_count=len(ratings),
         rating_distribution=rating_distribution,
+        max_rating_count=max_rating_count,
         top_genres=top_genres,
         max_genre_count=max_genre_count,
         month_labels=month_labels,
         monthly_added=monthly_added,
         monthly_watched=monthly_watched,
         max_monthly=max_monthly,
+        chart_w=CHART_W,
+        chart_h=CHART_H,
+        activity_added_points=activity_added_points,
+        activity_watched_points=activity_watched_points,
         avg_days_to_watch=avg_days_to_watch,
         top_rated=top_rated,
+        rated_rows=rated_rows,
     )

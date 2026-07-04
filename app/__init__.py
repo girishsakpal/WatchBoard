@@ -15,7 +15,7 @@ def create_app():
 
     if not os.environ.get("OWNER_USERNAME") or not os.environ.get("OWNER_PASSWORD"):
         print(
-            "WARNING: OWNER_USERNAME / OWNER_PASSWORD are not set — the personal "
+            "WARNING: OWNER_USERNAME / OWNER_PASSWORD are not set - the personal "
             "owner login will be disabled until they are."
         )
 
@@ -48,9 +48,6 @@ def create_app():
 
     @app.template_filter("relative_time")
     def relative_time(value):
-        """'3 minutes ago' style label. Accepts a datetime, a date string,
-        or None — the owner panel is the only current caller, since a
-        never-active user has no timestamp to format at all."""
         if not value:
             return "Never"
         import datetime as _dt

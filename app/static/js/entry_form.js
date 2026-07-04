@@ -130,3 +130,45 @@
   // Show a preview immediately when editing an entry that already has one.
   if (input.value.trim()) checkPoster();
 })();
+
+// Genre suggestion pills: tapping one adds/removes it from the
+// comma-separated genres field, and pills reflect whatever's already
+// typed in (including on the edit form, where genres are pre-filled).
+(function () {
+  const genresInput = document.getElementById('field-genres');
+  const pillContainer = document.getElementById('genre-suggestions');
+  if (!genresInput || !pillContainer) return;
+
+  function currentGenres() {
+    return genresInput.value
+      .split(',')
+      .map((g) => g.trim())
+      .filter(Boolean);
+  }
+
+  function syncPillStates() {
+    const active = new Set(currentGenres().map((g) => g.toLowerCase()));
+    pillContainer.querySelectorAll('.genre-pill').forEach((pill) => {
+      const isActive = active.has(pill.dataset.genre.toLowerCase());
+      pill.classList.toggle('genre-pill--active', isActive);
+    });
+  }
+
+  pillContainer.addEventListener('click', (e) => {
+    const pill = e.target.closest('.genre-pill');
+    if (!pill) return;
+    const genre = pill.dataset.genre;
+    const genres = currentGenres();
+    const idx = genres.findIndex((g) => g.toLowerCase() === genre.toLowerCase());
+    if (idx >= 0) {
+      genres.splice(idx, 1);
+    } else {
+      genres.push(genre);
+    }
+    genresInput.value = genres.join(', ');
+    syncPillStates();
+  });
+
+  genresInput.addEventListener('input', syncPillStates);
+  syncPillStates();
+})();

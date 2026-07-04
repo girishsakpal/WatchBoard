@@ -9,9 +9,6 @@ bp = Blueprint("owner", __name__, url_prefix="/owner")
 
 
 def _to_datetime(value):
-    """Same normalization board.py's insights route uses: SQLite hands back
-    date strings, Postgres hands back native datetime objects — this makes
-    both sortable and comparable the same way."""
     if value is None or value == "":
         return None
     if isinstance(value, datetime):

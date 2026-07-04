@@ -46,23 +46,58 @@
   <div class="insights__grid">
     <section class="panel panel--wide">
       <h2>Activity over the last 12 months</h2>
-      <p class="panel__sub">Titles added to your board vs. titles marked watched, by month.</p>
-      <canvas id="chart-activity" height="260"></canvas>
+      <p class="panel__sub">How many titles you <strong>added</strong> to your board vs. how many you marked <strong>watched</strong>, grouped by calendar month - a rolling year, oldest on the left.</p>
+      {% if max_monthly > 0 %}
+        <div class="activity-chart">
+          <svg viewBox="0 0 {{ chart_w }} {{ chart_h }}" preserveAspectRatio="none" class="activity-chart__svg">
+            {% if activity_added_points %}<polyline points="{{ activity_added_points }}" class="activity-chart__line activity-chart__line--added" />{% endif %}
+            {% if activity_watched_points %}<polyline points="{{ activity_watched_points }}" class="activity-chart__line activity-chart__line--watched" />{% endif %}
+          </svg>
+          <div class="activity-chart__labels">
+            {% for label in month_labels %}<span>{{ label }}</span>{% endfor %}
+          </div>
+          <div class="activity-chart__legend">
+            <span><i class="activity-chart__swatch activity-chart__swatch--added"></i> Added</span>
+            <span><i class="activity-chart__swatch activity-chart__swatch--watched"></i> Watched</span>
+          </div>
+        </div>
+      {% else %}
+        <p class="panel__empty">Nothing added or watched in the last 12 months yet.</p>
+      {% endif %}
     </section>
 
     <section class="panel">
       <h2>Library mix</h2>
-      <p class="panel__sub">Film, series, and anime as a share of your board.</p>
-      <canvas id="chart-media" height="260"></canvas>
+      <p class="panel__sub">Film, series, and anime as a share of your board - <strong>{{ total }}</strong> title{{ '' if total == 1 else 's' }} total.</p>
+      <div class="media-bars">
+        {% for m in media_breakdown %}
+          <div class="media-bar">
+            <div class="media-bar__label">
+              <span>{{ m.label }}</span>
+              <span class="media-bar__count">{{ m.count }}</span>
+            </div>
+            <div class="media-bar__track">
+              <div class="media-bar__fill media-bar__fill--{{ m.key }}" style="width: {{ (m.count / max_media_count * 100) if max_media_count else 0 }}%;"></div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
     </section>
 
     <section class="panel">
       <h2>Rating distribution</h2>
-      <p class="panel__sub">How your 1–10 ratings are spread out.</p>
+      <p class="panel__sub">How many titles you gave each score from 1 to 10 - only titles you've actually rated count here.</p>
       {% if rated_count > 0 %}
-        <canvas id="chart-ratings" height="220"></canvas>
+        <div class="rating-chart">
+          {% for count in rating_distribution %}
+            <div class="rating-chart__col">
+              <div class="rating-chart__bar" style="height: {{ (count / max_rating_count * 100) if max_rating_count else 0 }}%;" title="{{ count }} title{{ '' if count == 1 else 's' }}"></div>
+              <span class="rating-chart__tick">{{ loop.index }}</span>
+            </div>
+          {% endfor %}
+        </div>
       {% else %}
-        <p class="panel__empty">Rate a few watched titles to see this fill in.</p>
+        <p class="panel__empty">Rate a few watched titles to see this fill in - the "Your rating" field is optional when you add or edit an entry.</p>
       {% endif %}
     </section>
 
@@ -102,6 +137,21 @@
             </li>
           {% endfor %}
         </ol>
+        {% if rated_rows|length > 5 %}
+          <details class="rated-all">
+            <summary>See all {{ rated_rows|length }} rated titles</summary>
+            <ol class="top-rated top-rated--full">
+              {% for entry in rated_rows %}
+                <li>
+                  <span class="top-rated__rank">{{ loop.index }}</span>
+                  <span class="top-rated__title">{{ entry.title }}</span>
+                  <span class="top-rated__type">{{ {'movie': 'Film', 'tv': 'Series', 'anime': 'Anime'}[entry.media_type] }}</span>
+                  <span class="top-rated__score">{{ entry.rating }}/10</span>
+                </li>
+              {% endfor %}
+            </ol>
+          </details>
+        {% endif %}
       {% else %}
         <p class="panel__empty">Rate a title to see your top picks here.</p>
       {% endif %}
@@ -110,116 +160,4 @@
 
   {% endif %}
 </div>
-{% endblock %}
-
-{% block scripts %}
-{% if total > 0 %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
-(function () {
-  function cssVar(name) {
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  }
-
-  var ink = cssVar('--ink') || '#0F0E11';
-  var stone = cssVar('--stone') || '#8A8578';
-  var stoneLine = cssVar('--stone-line') || '#D9D2C2';
-  var marquee = cssVar('--marquee') || '#C9472B';
-  var teal = cssVar('--teal') || '#2D6E5E';
-  var paperFlat = cssVar('--paper-flat') || '#FFFDF8';
-  var bodyFont = "Inter, -apple-system, sans-serif";
-
-  Chart.defaults.font.family = bodyFont;
-  Chart.defaults.color = stone;
-  Chart.defaults.borderColor = stoneLine;
-
-  var monthLabels = {{ month_labels|tojson }};
-  var monthlyAdded = {{ monthly_added|tojson }};
-  var monthlyWatched = {{ monthly_watched|tojson }};
-
-  new Chart(document.getElementById('chart-activity'), {
-    type: 'line',
-    data: {
-      labels: monthLabels,
-      datasets: [
-        {
-          label: 'Added',
-          data: monthlyAdded,
-          borderColor: marquee,
-          backgroundColor: marquee,
-          tension: 0.35,
-          pointRadius: 3,
-          borderWidth: 2,
-        },
-        {
-          label: 'Watched',
-          data: monthlyWatched,
-          borderColor: teal,
-          backgroundColor: teal,
-          tension: 0.35,
-          pointRadius: 3,
-          borderWidth: 2,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true } } },
-      scales: {
-        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: stoneLine } },
-        x: { grid: { display: false } },
-      },
-    },
-  });
-
-  var mediaBreakdown = {{ media_breakdown|tojson }};
-  new Chart(document.getElementById('chart-media'), {
-    type: 'doughnut',
-    data: {
-      labels: mediaBreakdown.map(function (d) { return d.label; }),
-      datasets: [{
-        data: mediaBreakdown.map(function (d) { return d.count; }),
-        backgroundColor: [marquee, teal, ink],
-        borderColor: paperFlat,
-        borderWidth: 2,
-      }],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '62%',
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true } } },
-    },
-  });
-
-  {% if rated_count > 0 %}
-  var ratingDistribution = {{ rating_distribution|tojson }};
-  new Chart(document.getElementById('chart-ratings'), {
-    type: 'bar',
-    data: {
-      labels: ['1','2','3','4','5','6','7','8','9','10'],
-      datasets: [{
-        label: 'Titles',
-        data: ratingDistribution,
-        backgroundColor: marquee,
-        borderRadius: 4,
-        maxBarThickness: 28,
-      }],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: stoneLine } },
-        x: { grid: { display: false } },
-      },
-    },
-  });
-  {% endif %}
-})();
-</script>
-{% endif %}
 {% endblock %}

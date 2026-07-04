@@ -91,6 +91,68 @@
 .panel__sub { color: var(--stone); font-size: 0.8rem; margin: 0 0 16px; }
 .panel__empty { color: var(--stone); font-size: 0.85rem; padding: 30px 0; text-align: center; }
 
+/* ---------- Activity line chart (pure SVG, no JS library) ---------- */
+.activity-chart { display: flex; flex-direction: column; gap: 8px; }
+.activity-chart__svg { width: 100%; height: 180px; overflow: visible; }
+.activity-chart__line { fill: none; stroke-width: 1.6; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+.activity-chart__line--added { stroke: var(--marquee); }
+.activity-chart__line--watched { stroke: var(--teal); }
+.activity-chart__labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--stone);
+  padding: 0 2px;
+}
+.activity-chart__legend { display: flex; gap: 16px; font-size: 0.8rem; color: var(--stone); }
+.activity-chart__legend span { display: inline-flex; align-items: center; gap: 6px; }
+.activity-chart__swatch { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.activity-chart__swatch--added { background: var(--marquee); }
+.activity-chart__swatch--watched { background: var(--teal); }
+
+/* ---------- Library mix bars ---------- */
+.media-bars { display: flex; flex-direction: column; gap: 14px; }
+.media-bar__label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; }
+.media-bar__count { font-family: var(--font-mono); color: var(--stone); font-size: 0.75rem; }
+.media-bar__track { height: 10px; border-radius: var(--radius-pill); background: var(--paper-dim); overflow: hidden; }
+.media-bar__fill { height: 100%; border-radius: var(--radius-pill); }
+.media-bar__fill--movie { background: var(--marquee); }
+.media-bar__fill--tv { background: var(--teal); }
+.media-bar__fill--anime { background: var(--ink); }
+
+/* ---------- Rating distribution bars (1-10) ---------- */
+.rating-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 140px;
+  padding-top: 8px;
+}
+.rating-chart__col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; }
+.rating-chart__bar {
+  width: 100%;
+  max-width: 26px;
+  min-height: 2px;
+  border-radius: 3px 3px 0 0;
+  background: var(--marquee);
+}
+.rating-chart__tick { font-family: var(--font-mono); font-size: 0.68rem; color: var(--stone); }
+
+/* ---------- Full rated list disclosure ---------- */
+.rated-all { margin-top: 14px; }
+.rated-all summary {
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--marquee);
+  font-weight: 600;
+  list-style: none;
+}
+.rated-all summary::-webkit-details-marker { display: none; }
+.rated-all summary::before { content: "▸ "; }
+.rated-all[open] summary::before { content: "▾ "; }
+.top-rated--full { margin-top: 10px; max-height: 320px; overflow-y: auto; }
+
 /* ---------- Genre bars ---------- */
 .genre-bars { display: flex; flex-direction: column; gap: 10px; }
 .genre-bar__label {

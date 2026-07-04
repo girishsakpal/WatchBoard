@@ -9,9 +9,6 @@ from app.db.database import get_db
 
 
 def _touch_last_active(user_id):
-    """Best-effort activity stamp for the owner panel. Never allowed to
-    break a real request — if the DB hiccups here, the user just doesn't
-    get an updated timestamp this time around."""
     try:
         with get_db() as db:
             db.execute(

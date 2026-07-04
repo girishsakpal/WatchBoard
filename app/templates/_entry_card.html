@@ -1,3 +1,4 @@
+{% from "_macros.html" import star_rating %}
 {% macro entry_card(entry) %}
 <article id="entry-{{ entry.id }}" class="stub {{ 'stub--watched' if entry.status == 'watched' else 'stub--wishlist' }}">
   <div class="stub__poster">
@@ -19,8 +20,8 @@
     </div>
     <h3 class="stub__title">{{ entry.title }}</h3>
     {% if entry.rating %}
-      <div class="stub__rating" aria-label="Rated {{ entry.rating }} out of 10">
-        {{ '★' * ((entry.rating + 1) // 2) }}
+      <div class="stub__rating">
+        {{ star_rating(entry.rating) }}
         <span class="stub__rating-num">{{ entry.rating }}/10</span>
       </div>
     {% endif %}

@@ -58,8 +58,14 @@
 
     <div class="entry-form__row">
       <label>Genres
-        <input type="text" name="genres" value="{{ entry.genres if entry and entry.genres else '' }}" placeholder="Sci-fi, Drama" />
+        <input type="text" name="genres" id="field-genres" value="{{ entry.genres if entry and entry.genres else '' }}" placeholder="Sci-fi, Drama" />
+        <span class="field-hint">Tap any tag below to add it, or just type your own, comma-separated.</span>
       </label>
+      <div class="genre-suggestions" id="genre-suggestions">
+        {% for genre in ['Action','Adventure','Animation','Comedy','Crime','Documentary','Drama','Family','Fantasy','Historical','Horror','Isekai','Mecha','Musical','Mystery','Romance','Sci-Fi','Slice of Life','Sports','Thriller','War','Western','Shonen','Seinen'] %}
+          <button type="button" class="genre-pill" data-genre="{{ genre }}">{{ genre }}</button>
+        {% endfor %}
+      </div>
     </div>
 
     <div class="entry-form__row">
