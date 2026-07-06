@@ -139,11 +139,11 @@
         </ol>
         {% if rated_rows|length > 5 %}
           <details class="rated-all">
-            <summary>See all {{ rated_rows|length }} rated titles</summary>
+            <summary>See the rest of your rated titles ({{ rated_rows|length - 5 }})</summary>
             <ol class="top-rated top-rated--full">
-              {% for entry in rated_rows %}
+              {% for entry in rated_rows[5:] %}
                 <li>
-                  <span class="top-rated__rank">{{ loop.index }}</span>
+                  <span class="top-rated__rank">{{ loop.index + 5 }}</span>
                   <span class="top-rated__title">{{ entry.title }}</span>
                   <span class="top-rated__type">{{ {'movie': 'Film', 'tv': 'Series', 'anime': 'Anime'}[entry.media_type] }}</span>
                   <span class="top-rated__score">{{ entry.rating }}/10</span>

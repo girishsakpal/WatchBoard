@@ -86,3 +86,16 @@
   {% endif %}
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    const input = document.querySelector('.dashboard__search');
+    const form = document.getElementById('filter-form');
+    if (!input || !form) return;
+    input.addEventListener('search', () => {
+      if (!input.value) form.submit();
+    });
+  })();
+</script>
+{% endblock %}
