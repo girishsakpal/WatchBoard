@@ -69,6 +69,13 @@
     </select>
   </form>
 
+  {% if q or status or media_type %}
+    <p class="dashboard__results-count">
+      {{ entries|length }} result{{ '' if entries|length == 1 else 's' }}
+      {%- if q %} for "{{ q }}"{% endif %}
+    </p>
+  {% endif %}
+
   {% if entries|length == 0 %}
     <div class="dashboard__empty">
       <p>
