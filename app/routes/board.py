@@ -67,10 +67,27 @@ def dashboard():
 
     with get_db() as db:
         entries, _ = db.execute(query, params)
-        all_rows, _ = db.execute("SELECT status FROM entries WHERE user_id = ?", [user_id])
+        all_rows, _ = db.execute("SELECT status, media_type FROM entries WHERE user_id = ?", [user_id])
+
+    total = len(all_rows)
+    media_counts = {
+        "movie": sum(1 for r in all_rows if r["media_type"] == "movie"),
+        "tv": sum(1 for r in all_rows if r["media_type"] == "tv"),
+        "anime": sum(1 for r in all_rows if r["media_type"] == "anime"),
+    }
+    media_breakdown = [
+        {
+            "key": key,
+            "label": label,
+            "count": media_counts[key],
+            "pct": round((media_counts[key] / total) * 100) if total else 0,
+        }
+        for key, label in (("movie", "Film"), ("tv", "Series"), ("anime", "Anime"))
+        if media_counts[key] > 0
+    ]
 
     counts = {
-        "total": len(all_rows),
+        "total": total,
         "wishlist": sum(1 for r in all_rows if r["status"] == "wishlist"),
         "watched": sum(1 for r in all_rows if r["status"] == "watched"),
     }
@@ -79,6 +96,7 @@ def dashboard():
         "dashboard.html",
         entries=entries,
         counts=counts,
+        media_breakdown=media_breakdown,
         q=q, status=status, media_type=media_type, sort=sort,
     )
 
