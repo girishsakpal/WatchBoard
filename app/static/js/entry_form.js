@@ -131,44 +131,48 @@
   if (input.value.trim()) checkPoster();
 })();
 
-// Genre suggestion pills: tapping one adds/removes it from the
-// comma-separated genres field, and pills reflect whatever's already
-// typed in (including on the edit form, where genres are pre-filled).
-(function () {
-  const genresInput = document.getElementById('field-genres');
-  const pillContainer = document.getElementById('genre-suggestions');
-  if (!genresInput || !pillContainer) return;
+// Tag-pill fields (genres, platforms): tapping a pill adds/removes it from
+// the comma-separated field it's attached to, and pills reflect whatever's
+// already typed in (including on the edit form, where values are pre-filled).
+// One reusable initializer since genres and platforms behave identically.
+function initTagPillField(inputId, containerId, pillClass, dataAttr) {
+  const input = document.getElementById(inputId);
+  const pillContainer = document.getElementById(containerId);
+  if (!input || !pillContainer) return;
 
-  function currentGenres() {
-    return genresInput.value
+  function currentValues() {
+    return input.value
       .split(',')
-      .map((g) => g.trim())
+      .map((v) => v.trim())
       .filter(Boolean);
   }
 
   function syncPillStates() {
-    const active = new Set(currentGenres().map((g) => g.toLowerCase()));
-    pillContainer.querySelectorAll('.genre-pill').forEach((pill) => {
-      const isActive = active.has(pill.dataset.genre.toLowerCase());
-      pill.classList.toggle('genre-pill--active', isActive);
+    const active = new Set(currentValues().map((v) => v.toLowerCase()));
+    pillContainer.querySelectorAll('.' + pillClass).forEach((pill) => {
+      const isActive = active.has(pill.dataset[dataAttr].toLowerCase());
+      pill.classList.toggle(pillClass + '--active', isActive);
     });
   }
 
   pillContainer.addEventListener('click', (e) => {
-    const pill = e.target.closest('.genre-pill');
+    const pill = e.target.closest('.' + pillClass);
     if (!pill) return;
-    const genre = pill.dataset.genre;
-    const genres = currentGenres();
-    const idx = genres.findIndex((g) => g.toLowerCase() === genre.toLowerCase());
+    const value = pill.dataset[dataAttr];
+    const values = currentValues();
+    const idx = values.findIndex((v) => v.toLowerCase() === value.toLowerCase());
     if (idx >= 0) {
-      genres.splice(idx, 1);
+      values.splice(idx, 1);
     } else {
-      genres.push(genre);
+      values.push(value);
     }
-    genresInput.value = genres.join(', ');
+    input.value = values.join(', ');
     syncPillStates();
   });
 
-  genresInput.addEventListener('input', syncPillStates);
+  input.addEventListener('input', syncPillStates);
   syncPillStates();
-})();
+}
+
+initTagPillField('field-genres', 'genre-suggestions', 'genre-pill', 'genre');
+initTagPillField('field-platforms', 'platform-suggestions', 'platform-pill', 'platform');

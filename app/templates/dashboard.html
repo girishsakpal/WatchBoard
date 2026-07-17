@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% from "_entry_card.html" import entry_card %}
 {% block title %}WatchBoard{% endblock %}
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />{% endblock %}
 
 {% block content %}
 <div class="dashboard">
@@ -31,82 +30,83 @@
       <span class="dashboard__stat-label">Watched</span>
     </div>
     <div class="dashboard__stat">
-      <span class="dashboard__stat-value">{{ (counts.watched / counts.total * 100) | round | int if counts.total else 0
-        }}<small>%</small></span>
+      <span class="dashboard__stat-value">{{ (counts.watched / counts.total * 100) | round | int if counts.total else 0 }}<small>%</small></span>
       <span class="dashboard__stat-label">Completion</span>
     </div>
   </div>
 
   {% if media_breakdown %}
-  <div class="media-split">
-    <div class="media-split__bar">
-      {% for m in media_breakdown %}
-      <div class="media-split__seg media-split__seg--{{ m.key }}" style="width: {{ m.pct }}%;"
-        title="{{ m.label }}: {{ m.count }} ({{ m.pct }}%)">
-        {% if m.pct >= 8 %}<span>{{ m.pct }}%</span>{% endif %}
+    <div class="media-split">
+      <div class="media-split__bar">
+        {% for m in media_breakdown %}
+          <div class="media-split__seg media-split__seg--{{ m.key }}" style="width: {{ m.pct }}%;" title="{{ m.label }}: {{ m.count }} ({{ m.pct }}%)">
+            {% if m.pct >= 8 %}<span>{{ m.pct }}%</span>{% endif %}
+          </div>
+        {% endfor %}
       </div>
-      {% endfor %}
+      <div class="media-split__legend">
+        {% for m in media_breakdown %}
+          <span><i class="media-split__swatch media-split__swatch--{{ m.key }}"></i>{{ m.label }} ({{ m.count }})</span>
+        {% endfor %}
+      </div>
     </div>
-    <div class="media-split__legend">
-      {% for m in media_breakdown %}
-      <span><i class="media-split__swatch media-split__swatch--{{ m.key }}"></i>{{ m.label }} ({{ m.count }})</span>
-      {% endfor %}
-    </div>
-  </div>
   {% endif %}
 
   <form method="get" action="{{ url_for('board.dashboard') }}" class="dashboard__controls" id="filter-form">
-    <input type="search" name="q" class="dashboard__search" placeholder="Search your titles..." value="{{ q }}"
-      aria-label="Search titles" />
+    <input
+      type="search" name="q" class="dashboard__search"
+      placeholder="Search your titles..." value="{{ q }}"
+      aria-label="Search titles"
+    />
 
     <div class="dashboard__tabs" role="tablist" aria-label="Filter by status">
       <a href="{{ url_for('board.dashboard', q=q, media_type=media_type, sort=sort) }}"
-        class="dashboard__tab {{ 'dashboard__tab--active' if not status }}">All</a>
+         class="dashboard__tab {{ 'dashboard__tab--active' if not status }}">All</a>
       <a href="{{ url_for('board.dashboard', q=q, status='wishlist', media_type=media_type, sort=sort) }}"
-        class="dashboard__tab {{ 'dashboard__tab--active' if status == 'wishlist' }}">Wishlist</a>
+         class="dashboard__tab {{ 'dashboard__tab--active' if status == 'wishlist' }}">Wishlist</a>
       <a href="{{ url_for('board.dashboard', q=q, status='watched', media_type=media_type, sort=sort) }}"
-        class="dashboard__tab {{ 'dashboard__tab--active' if status == 'watched' }}">Watched</a>
+         class="dashboard__tab {{ 'dashboard__tab--active' if status == 'watched' }}">Watched</a>
     </div>
     <input type="hidden" name="status" value="{{ status }}" />
 
     <select name="media_type" aria-label="Filter by type" onchange="document.getElementById('filter-form').submit()">
       <option value="" {{ 'selected' if not media_type }}>All types</option>
-      <option value="movie" {{ 'selected' if media_type=='movie' }}>Films</option>
-      <option value="tv" {{ 'selected' if media_type=='tv' }}>Series</option>
-      <option value="anime" {{ 'selected' if media_type=='anime' }}>Anime</option>
+      <option value="movie" {{ 'selected' if media_type == 'movie' }}>Films</option>
+      <option value="tv" {{ 'selected' if media_type == 'tv' }}>Series</option>
+      <option value="anime" {{ 'selected' if media_type == 'anime' }}>Anime</option>
     </select>
 
     <select name="sort" aria-label="Sort entries" onchange="document.getElementById('filter-form').submit()">
-      <option value="title_asc" {{ 'selected' if sort=='title_asc' }}>Title, A → Z</option>
-      <option value="title_desc" {{ 'selected' if sort=='title_desc' }}>Title, Z → A</option>
-      <option value="date_added_desc" {{ 'selected' if sort=='date_added_desc' }}>Recently added</option>
-      <option value="date_added_asc" {{ 'selected' if sort=='date_added_asc' }}>Oldest added</option>
-      <option value="year_desc" {{ 'selected' if sort=='year_desc' }}>Release year</option>
-      <option value="rating_desc" {{ 'selected' if sort=='rating_desc' }}>Your rating</option>
+      <option value="title_asc" {{ 'selected' if sort == 'title_asc' }}>Title, A → Z</option>
+      <option value="title_desc" {{ 'selected' if sort == 'title_desc' }}>Title, Z → A</option>
+      <option value="date_added_desc" {{ 'selected' if sort == 'date_added_desc' }}>Recently added</option>
+      <option value="date_added_asc" {{ 'selected' if sort == 'date_added_asc' }}>Oldest added</option>
+      <option value="year_desc" {{ 'selected' if sort == 'year_desc' }}>Release year</option>
+      <option value="rating_desc" {{ 'selected' if sort == 'rating_desc' }}>Your rating</option>
     </select>
   </form>
 
   {% if q or status or media_type %}
-  <p class="dashboard__results-count">
-    {{ entries|length }} result{{ '' if entries|length == 1 else 's' }}
-    {%- if q %} for "{{ q }}"{% endif %}
-  </p>
+    <p class="dashboard__results-count">
+      {{ entries|length }} result{{ '' if entries|length == 1 else 's' }}
+      {%- if q %} for "{{ q }}"{% endif %}
+    </p>
   {% endif %}
 
   {% if entries|length == 0 %}
-  <div class="dashboard__empty">
-    <p>
-      {% if q or status or media_type %}
-      Nothing matches those filters yet.
-      {% else %}
-      Your board is empty. Add the first title you've been meaning to watch.
-      {% endif %}
-    </p>
-  </div>
+    <div class="dashboard__empty">
+      <p>
+        {% if q or status or media_type %}
+          Nothing matches those filters yet.
+        {% else %}
+          Your board is empty. Add the first title you've been meaning to watch.
+        {% endif %}
+      </p>
+    </div>
   {% else %}
-  <div class="dashboard__grid">
-    {% for entry in entries %}{{ entry_card(entry) }}{% endfor %}
-  </div>
+    <div class="dashboard__grid">
+      {% for entry in entries %}{{ entry_card(entry) }}{% endfor %}
+    </div>
   {% endif %}
 </div>
 {% endblock %}
@@ -121,5 +121,20 @@
       if (!input.value) form.submit();
     });
   })();
+
+  function prepareMarkWatched(form) {
+    const input = window.prompt('Rate it 1-10 (optional, leave blank to skip):', '');
+    if (input === null) return false;
+    const trimmed = input.trim();
+    if (trimmed) {
+      const rating = parseInt(trimmed, 10);
+      if (isNaN(rating) || rating < 1 || rating > 10) {
+        alert('Rating must be a whole number between 1 and 10, or left blank.');
+        return false;
+      }
+      form.querySelector('.js-toggle-rating').value = rating;
+    }
+    return true;
+  }
 </script>
 {% endblock %}

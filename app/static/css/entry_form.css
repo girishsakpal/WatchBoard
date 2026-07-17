@@ -79,6 +79,7 @@
 .entry-form__row--split label { flex: 1; min-width: 0; }
 .entry-form label { display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem; font-weight: 500; color: var(--stone); }
 .field-hint { font-size: 0.7rem; font-weight: 400; color: var(--stone); opacity: 0.85; line-height: 1.4; }
+.field-optional { font-weight: 400; text-transform: none; letter-spacing: 0; opacity: 0.7; }
 
 .genre-suggestions {
   display: flex;
@@ -104,6 +105,31 @@
   color: var(--paper);
 }
 .genre-pill--active:hover { color: var(--paper); }
+
+.platform-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.platform-pill {
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--stone-line);
+  background: var(--paper-dim);
+  color: var(--stone);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.platform-pill:hover { border-color: var(--ink); color: var(--ink); }
+.platform-pill--active {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--paper);
+}
+.platform-pill--active:hover { color: var(--paper); }
 
 .poster-preview {
   display: flex;

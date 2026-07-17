@@ -148,6 +148,7 @@ def new_entry():
     overview = request.form.get("overview") or None
     year = request.form.get("year") or None
     genres = request.form.get("genres") or None
+    platforms = request.form.get("platforms") or None
     rating = request.form.get("rating") or None
     notes = request.form.get("notes") or None
     tmdb_id = request.form.get("tmdb_id") or None
@@ -162,22 +163,22 @@ def new_entry():
                 f"""
                 INSERT INTO entries
                     (user_id, title, media_type, status, poster_url, overview,
-                     year, genres, rating, notes, tmdb_id, date_watched)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, {date_watched_sql})
+                     year, genres, platforms, rating, notes, tmdb_id, date_watched)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, {date_watched_sql})
                 """,
                 [user_id, title, media_type, status, poster_url, overview,
-                 year, genres, rating, notes, tmdb_id],
+                 year, genres, platforms, rating, notes, tmdb_id],
             )
         else:
             db.execute(
                 f"""
                 INSERT INTO entries
                     (user_id, title, media_type, status, poster_url, overview,
-                     year, genres, rating, notes, tmdb_id, date_watched)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, {date_watched_clause})
+                     year, genres, platforms, rating, notes, tmdb_id, date_watched)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, {date_watched_clause})
                 """,
                 [user_id, title, media_type, status, poster_url, overview,
-                 year, genres, rating, notes, tmdb_id],
+                 year, genres, platforms, rating, notes, tmdb_id],
             )
 
     flash(f'"{title}" added to your board.', "success")
@@ -211,6 +212,7 @@ def edit_entry(entry_id):
     overview = request.form.get("overview") or None
     year = request.form.get("year") or None
     genres = request.form.get("genres") or None
+    platforms = request.form.get("platforms") or None
     rating = request.form.get("rating") or None
     notes = request.form.get("notes") or None
 
@@ -229,11 +231,11 @@ def edit_entry(entry_id):
             f"""
             UPDATE entries SET
                 title = ?, media_type = ?, status = ?, poster_url = ?, overview = ?,
-                year = ?, genres = ?, rating = ?, notes = ?,
+                year = ?, genres = ?, platforms = ?, rating = ?, notes = ?,
                 date_watched = {date_watched_sql}, updated_at = {now_fn}
             WHERE id = ? AND user_id = ?
             """,
-            [title, media_type, status, poster_url, overview, year, genres, rating, notes, entry_id, user_id],
+            [title, media_type, status, poster_url, overview, year, genres, platforms, rating, notes, entry_id, user_id],
         )
 
     flash(f'"{title}" updated.', "success")
@@ -255,11 +257,33 @@ def toggle_status(entry_id):
         now_fn = "NOW()" if get_backend_name() == "postgres" else "datetime('now')"
         date_watched_sql = f"COALESCE(date_watched, {now_fn})" if new_status == "watched" else "NULL"
 
-        db.execute(
-            f"UPDATE entries SET status = ?, date_watched = {date_watched_sql}, updated_at = {now_fn} "
-            f"WHERE id = ? AND user_id = ?",
-            [new_status, entry_id, user_id],
-        )
+        # Only relevant when moving wishlist -> watched: the entry form's
+        # "Mark watched" button prompts for an optional rating, which rides
+        # along on this same request. Silently ignored if missing/invalid
+        # rather than failing the whole status change over a bad rating.
+        rating = None
+        if new_status == "watched":
+            raw_rating = request.form.get("rating", "").strip()
+            if raw_rating:
+                try:
+                    parsed = int(raw_rating)
+                    if 1 <= parsed <= 10:
+                        rating = parsed
+                except ValueError:
+                    pass
+
+        if rating is not None:
+            db.execute(
+                f"UPDATE entries SET status = ?, rating = ?, date_watched = {date_watched_sql}, updated_at = {now_fn} "
+                f"WHERE id = ? AND user_id = ?",
+                [new_status, rating, entry_id, user_id],
+            )
+        else:
+            db.execute(
+                f"UPDATE entries SET status = ?, date_watched = {date_watched_sql}, updated_at = {now_fn} "
+                f"WHERE id = ? AND user_id = ?",
+                [new_status, entry_id, user_id],
+            )
 
     return redirect(request.referrer or url_for("board.dashboard"))
 
@@ -387,17 +411,6 @@ def insights():
     activity_added_points = _line_points(monthly_added, max_monthly)
     activity_watched_points = _line_points(monthly_watched, max_monthly)
 
-    # --- Average time from adding to watching ---
-    lead_times = []
-    for r in watched_rows:
-        added = _to_datetime(r["date_added"])
-        watched = _to_datetime(r["date_watched"])
-        if added and watched:
-            delta_days = (watched - added).days
-            if delta_days >= 0:
-                lead_times.append(delta_days)
-    avg_days_to_watch = round(sum(lead_times) / len(lead_times)) if lead_times else None
-
     rated_rows = sorted(
         [r for r in rows if r["rating"]], key=lambda r: r["rating"], reverse=True
     )
@@ -425,7 +438,6 @@ def insights():
         chart_h=CHART_H,
         activity_added_points=activity_added_points,
         activity_watched_points=activity_watched_points,
-        avg_days_to_watch=avg_days_to_watch,
         top_rated=top_rated,
         rated_rows=rated_rows,
     )

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Insights - WatchBoard{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/insights.css') }}" />{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/insights.css') }}" />{% endblock %}
 
 {% block content %}
 <div class="insights">
@@ -8,16 +9,17 @@
     <div>
       <p class="insights__eyebrow">Board analytics</p>
       <h1>Your watching data, broken down.</h1>
-      <p class="insights__sub">A quick statistical read on what you're tracking, completion rate, genre mix, rating spread, and how your habits have moved month to month.</p>
+      <p class="insights__sub">A quick statistical read on what you're tracking, completion rate, genre mix, rating
+        spread, and how your habits have moved month to month.</p>
     </div>
     <a href="{{ url_for('board.dashboard') }}" class="btn btn--ghost">← Back to board</a>
   </div>
 
   {% if total == 0 %}
-    <div class="insights__empty">
-      <p>There's nothing to analyze yet. Add a few titles to your board and this page fills in on its own.</p>
-      <a href="{{ url_for('board.new_entry') }}" class="btn btn--primary">+ Add your first entry</a>
-    </div>
+  <div class="insights__empty">
+    <p>There's nothing to analyze yet. Add a few titles to your board and this page fills in on its own.</p>
+    <a href="{{ url_for('board.new_entry') }}" class="btn btn--primary">+ Add your first entry</a>
+  </div>
   {% else %}
 
   <div class="insights__kpis">
@@ -29,75 +31,84 @@
     <div class="kpi">
       <span class="kpi__label">Completion rate</span>
       <span class="kpi__value">{{ completion_rate }}<span class="kpi__unit">%</span></span>
-      <div class="kpi__bar"><div class="kpi__bar-fill" style="width: {{ completion_rate }}%;"></div></div>
+      <div class="kpi__bar">
+        <div class="kpi__bar-fill" style="width: {{ completion_rate }}%;"></div>
+      </div>
     </div>
     <div class="kpi">
       <span class="kpi__label">Average rating</span>
-      <span class="kpi__value">{{ avg_rating if avg_rating is not none else '-' }}{% if avg_rating is not none %}<span class="kpi__unit">/10</span>{% endif %}</span>
+      <span class="kpi__value">{{ avg_rating if avg_rating is not none else '-' }}{% if avg_rating is not none %}<span
+          class="kpi__unit">/10</span>{% endif %}</span>
       <span class="kpi__note">across {{ rated_count }} rated title{{ '' if rated_count == 1 else 's' }}</span>
-    </div>
-    <div class="kpi">
-      <span class="kpi__label">Avg. time to watch</span>
-      <span class="kpi__value">{{ avg_days_to_watch if avg_days_to_watch is not none else '-' }}{% if avg_days_to_watch is not none %}<span class="kpi__unit">d</span>{% endif %}</span>
-      <span class="kpi__note">from add date to watched date</span>
     </div>
   </div>
 
   <div class="insights__grid">
     <section class="panel panel--wide">
       <h2>Activity over the last 12 months</h2>
-      <p class="panel__sub">How many titles you <strong>added</strong> to your board vs. how many you marked <strong>watched</strong>, grouped by calendar month - a rolling year, oldest on the left.</p>
+      <p class="panel__sub">How many titles you <strong>added</strong> to your board vs. how many you marked
+        <strong>watched</strong>, grouped by calendar month - a rolling year, oldest on the left.</p>
       {% if max_monthly > 0 %}
-        <div class="activity-chart">
-          <svg viewBox="0 0 {{ chart_w }} {{ chart_h }}" preserveAspectRatio="none" class="activity-chart__svg">
-            {% if activity_added_points %}<polyline points="{{ activity_added_points }}" class="activity-chart__line activity-chart__line--added" />{% endif %}
-            {% if activity_watched_points %}<polyline points="{{ activity_watched_points }}" class="activity-chart__line activity-chart__line--watched" />{% endif %}
-          </svg>
-          <div class="activity-chart__labels">
-            {% for label in month_labels %}<span>{{ label }}</span>{% endfor %}
-          </div>
-          <div class="activity-chart__legend">
-            <span><i class="activity-chart__swatch activity-chart__swatch--added"></i> Added</span>
-            <span><i class="activity-chart__swatch activity-chart__swatch--watched"></i> Watched</span>
-          </div>
+      <div class="activity-chart">
+        <svg viewBox="0 0 {{ chart_w }} {{ chart_h }}" preserveAspectRatio="none" class="activity-chart__svg">
+          {% if activity_added_points %}
+          <polyline points="{{ activity_added_points }}" class="activity-chart__line activity-chart__line--added" />{%
+          endif %}
+          {% if activity_watched_points %}
+          <polyline points="{{ activity_watched_points }}" class="activity-chart__line activity-chart__line--watched" />
+          {% endif %}
+        </svg>
+        <div class="activity-chart__labels">
+          {% for label in month_labels %}<span>{{ label }}</span>{% endfor %}
         </div>
+        <div class="activity-chart__legend">
+          <span><i class="activity-chart__swatch activity-chart__swatch--added"></i> Added</span>
+          <span><i class="activity-chart__swatch activity-chart__swatch--watched"></i> Watched</span>
+        </div>
+      </div>
       {% else %}
-        <p class="panel__empty">Nothing added or watched in the last 12 months yet.</p>
+      <p class="panel__empty">Nothing added or watched in the last 12 months yet.</p>
       {% endif %}
     </section>
 
     <section class="panel">
       <h2>Library mix</h2>
-      <p class="panel__sub">Film, series, and anime as a share of your board - <strong>{{ total }}</strong> title{{ '' if total == 1 else 's' }} total.</p>
+      <p class="panel__sub">Film, series, and anime as a share of your board - <strong>{{ total }}</strong> title{{ ''
+        if total == 1 else 's' }} total.</p>
       <div class="media-bars">
         {% for m in media_breakdown %}
-          <div class="media-bar">
-            <div class="media-bar__label">
-              <span>{{ m.label }}</span>
-              <span class="media-bar__count">{{ m.count }}</span>
-            </div>
-            <div class="media-bar__track">
-              <div class="media-bar__fill media-bar__fill--{{ m.key }}" style="width: {{ (m.count / max_media_count * 100) if max_media_count else 0 }}%;"></div>
-            </div>
+        <div class="media-bar">
+          <div class="media-bar__label">
+            <span>{{ m.label }}</span>
+            <span class="media-bar__count">{{ m.count }}</span>
           </div>
+          <div class="media-bar__track">
+            <div class="media-bar__fill media-bar__fill--{{ m.key }}"
+              style="width: {{ (m.count / max_media_count * 100) if max_media_count else 0 }}%;"></div>
+          </div>
+        </div>
         {% endfor %}
       </div>
     </section>
 
     <section class="panel">
       <h2>Rating distribution</h2>
-      <p class="panel__sub">How many titles you gave each score from 1 to 10 - only titles you've actually rated count here.</p>
+      <p class="panel__sub">How many titles you gave each score from 1 to 10 - only titles you've actually rated count
+        here.</p>
       {% if rated_count > 0 %}
-        <div class="rating-chart">
-          {% for count in rating_distribution %}
-            <div class="rating-chart__col">
-              <div class="rating-chart__bar" style="height: {{ (count / max_rating_count * 100) if max_rating_count else 0 }}%;" title="{{ count }} title{{ '' if count == 1 else 's' }}"></div>
-              <span class="rating-chart__tick">{{ loop.index }}</span>
-            </div>
-          {% endfor %}
+      <div class="rating-chart">
+        {% for count in rating_distribution %}
+        <div class="rating-chart__col">
+          <div class="rating-chart__bar"
+            style="height: {{ (count / max_rating_count * 100) if max_rating_count else 0 }}%;"
+            title="{{ count }} title{{ '' if count == 1 else 's' }}"></div>
+          <span class="rating-chart__tick">{{ loop.index }}</span>
         </div>
+        {% endfor %}
+      </div>
       {% else %}
-        <p class="panel__empty">Rate a few watched titles to see this fill in - the "Your rating" field is optional when you add or edit an entry.</p>
+      <p class="panel__empty">Rate a few watched titles to see this fill in - the "Your rating" field is optional when
+        you add or edit an entry.</p>
       {% endif %}
     </section>
 
@@ -105,21 +116,22 @@
       <h2>Top genres</h2>
       <p class="panel__sub">Most frequent genre tags across your board.</p>
       {% if top_genres %}
-        <div class="genre-bars">
-          {% for name, count in top_genres %}
-            <div class="genre-bar">
-              <div class="genre-bar__label">
-                <span>{{ name }}</span>
-                <span class="genre-bar__count">{{ count }}</span>
-              </div>
-              <div class="genre-bar__track">
-                <div class="genre-bar__fill" style="width: {{ (count / max_genre_count * 100) if max_genre_count else 0 }}%;"></div>
-              </div>
-            </div>
-          {% endfor %}
+      <div class="genre-bars">
+        {% for name, count in top_genres %}
+        <div class="genre-bar">
+          <div class="genre-bar__label">
+            <span>{{ name }}</span>
+            <span class="genre-bar__count">{{ count }}</span>
+          </div>
+          <div class="genre-bar__track">
+            <div class="genre-bar__fill"
+              style="width: {{ (count / max_genre_count * 100) if max_genre_count else 0 }}%;"></div>
+          </div>
         </div>
+        {% endfor %}
+      </div>
       {% else %}
-        <p class="panel__empty">Add genres to your entries to see a breakdown here.</p>
+      <p class="panel__empty">Add genres to your entries to see a breakdown here.</p>
       {% endif %}
     </section>
 
@@ -127,33 +139,35 @@
       <h2>Top rated</h2>
       <p class="panel__sub">Your five highest-rated titles.</p>
       {% if top_rated %}
-        <ol class="top-rated">
-          {% for entry in top_rated %}
-            <li>
-              <span class="top-rated__rank">{{ loop.index }}</span>
-              <span class="top-rated__title">{{ entry.title }}</span>
-              <span class="top-rated__type">{{ {'movie': 'Film', 'tv': 'Series', 'anime': 'Anime'}[entry.media_type] }}</span>
-              <span class="top-rated__score">{{ entry.rating }}/10</span>
-            </li>
+      <ol class="top-rated">
+        {% for entry in top_rated %}
+        <li>
+          <span class="top-rated__rank">{{ loop.index }}</span>
+          <span class="top-rated__title">{{ entry.title }}</span>
+          <span class="top-rated__type">{{ {'movie': 'Film', 'tv': 'Series', 'anime': 'Anime'}[entry.media_type]
+            }}</span>
+          <span class="top-rated__score">{{ entry.rating }}/10</span>
+        </li>
+        {% endfor %}
+      </ol>
+      {% if rated_rows|length > 5 %}
+      <details class="rated-all">
+        <summary>See the rest of your rated titles ({{ rated_rows|length - 5 }})</summary>
+        <ol class="top-rated top-rated--full">
+          {% for entry in rated_rows[5:] %}
+          <li>
+            <span class="top-rated__rank">{{ loop.index + 5 }}</span>
+            <span class="top-rated__title">{{ entry.title }}</span>
+            <span class="top-rated__type">{{ {'movie': 'Film', 'tv': 'Series', 'anime': 'Anime'}[entry.media_type]
+              }}</span>
+            <span class="top-rated__score">{{ entry.rating }}/10</span>
+          </li>
           {% endfor %}
         </ol>
-        {% if rated_rows|length > 5 %}
-          <details class="rated-all">
-            <summary>See the rest of your rated titles ({{ rated_rows|length - 5 }})</summary>
-            <ol class="top-rated top-rated--full">
-              {% for entry in rated_rows[5:] %}
-                <li>
-                  <span class="top-rated__rank">{{ loop.index + 5 }}</span>
-                  <span class="top-rated__title">{{ entry.title }}</span>
-                  <span class="top-rated__type">{{ {'movie': 'Film', 'tv': 'Series', 'anime': 'Anime'}[entry.media_type] }}</span>
-                  <span class="top-rated__score">{{ entry.rating }}/10</span>
-                </li>
-              {% endfor %}
-            </ol>
-          </details>
-        {% endif %}
+      </details>
+      {% endif %}
       {% else %}
-        <p class="panel__empty">Rate a title to see your top picks here.</p>
+      <p class="panel__empty">Rate a title to see your top picks here.</p>
       {% endif %}
     </section>
   </div>

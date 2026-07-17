@@ -1,12 +1,14 @@
 {% from "_macros.html" import star_rating %}
 {% macro entry_card(entry) %}
-<article id="entry-{{ entry.id }}" class="stub {{ 'stub--watched' if entry.status == 'watched' else 'stub--wishlist' }}">
+<article id="entry-{{ entry.id }}"
+  class="stub {{ 'stub--watched' if entry.status == 'watched' else 'stub--wishlist' }}">
   <div class="stub__poster">
     {% if entry.poster_url %}
-      <img src="{{ entry.poster_url }}" alt="{{ entry.title }} poster" loading="lazy"
-           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+    <img src="{{ entry.poster_url }}" alt="{{ entry.title }} poster" loading="lazy"
+      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
     {% endif %}
-    <div class="stub__poster-placeholder" aria-hidden="true" {% if entry.poster_url %}style="display:none"{% endif %}>{{ entry.title[:1]|upper }}</div>
+    <div class="stub__poster-placeholder" aria-hidden="true" {% if entry.poster_url %}style="display:none" {% endif %}>
+      {{ entry.title[:1]|upper }}</div>
     <span class="stub__stamp stub__stamp--{{ entry.status }}">
       {{ 'Watched' if entry.status == 'watched' else 'Wishlist' }}
     </span>
@@ -16,34 +18,44 @@
 
   <div class="stub__body">
     <div class="stub__type">
-      {{ {'movie': 'Film', 'tv': 'Series', 'anime': 'Anime'}[entry.media_type] }}{% if entry.year %} · {{ entry.year }}{% endif %}
+      {{ {'movie': 'Film', 'tv': 'Series', 'anime': 'Anime'}[entry.media_type] }}{% if entry.year %} · {{ entry.year
+      }}{% endif %}
     </div>
     <h3 class="stub__title">{{ entry.title }}</h3>
     {% if entry.rating %}
-      <div class="stub__rating">
-        {{ star_rating(entry.rating) }}
-        <span class="stub__rating-num">{{ entry.rating }}/10</span>
-      </div>
+    <div class="stub__rating">
+      {{ star_rating(entry.rating) }}
+      <span class="stub__rating-num">{{ entry.rating }}/10</span>
+    </div>
     {% endif %}
     {% if entry.notes %}<p class="stub__notes">{{ entry.notes }}</p>{% endif %}
+    {% if entry.platforms %}
+    <div class="stub__platforms">
+      {% for p in entry.platforms.split(',') %}
+      {% if p.strip() %}<span class="stub__platform-tag">{{ p.strip() }}</span>{% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
 
     <div class="stub__footer">
       <span class="stub__date">
         {% if entry.status == 'watched' and entry.date_watched %}
-          Watched {{ entry.date_watched|dateonly }}
+        Watched {{ entry.date_watched|dateonly }}
         {% else %}
-          Added {{ entry.date_added|dateonly }}
+        Added {{ entry.date_added|dateonly }}
         {% endif %}
       </span>
       <div class="stub__actions">
-        <form class="stub__action-form" method="post" action="{{ url_for('board.toggle_status', entry_id=entry.id) }}">
+        <form class="stub__action-form" method="post" action="{{ url_for('board.toggle_status', entry_id=entry.id) }}"
+          {% if entry.status=='wishlist' %}onsubmit="return prepareMarkWatched(this)" {% endif %}>
+          {% if entry.status == 'wishlist' %}<input type="hidden" name="rating" class="js-toggle-rating" />{% endif %}
           <button type="submit" class="stub__action-btn">
             {{ 'Move to wishlist' if entry.status == 'watched' else 'Mark watched' }}
           </button>
         </form>
         <a href="{{ url_for('board.edit_entry', entry_id=entry.id) }}" class="stub__action-btn">Edit</a>
         <form class="stub__action-form" method="post" action="{{ url_for('board.delete_entry', entry_id=entry.id) }}"
-              onsubmit="return confirm('Remove \'{{ entry.title|e }}\' from your board?');">
+          onsubmit="return confirm('Remove \'{{ entry.title|e }}\' from your board?');">
           <button type="submit" class="stub__action-btn stub__action-btn--quiet">Remove</button>
         </form>
       </div>

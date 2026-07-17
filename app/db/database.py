@@ -113,6 +113,22 @@ def _ensure_last_active_column(db, backend):
         cur.close()
 
 
+def _ensure_platforms_column(db, backend):
+    """Same idea as _ensure_last_active_column: added after the initial
+    release, so existing databases (local SQLite or the live Supabase
+    Postgres instance) need to pick this column up on their next boot
+    rather than assuming a fresh CREATE TABLE."""
+    if backend == "sqlite":
+        rows, _ = db.execute("PRAGMA table_info(entries)")
+        existing_columns = {row["name"] for row in rows}
+        if "platforms" not in existing_columns:
+            db._conn.execute("ALTER TABLE entries ADD COLUMN platforms TEXT")
+    else:
+        cur = db._conn.cursor()
+        cur.execute("ALTER TABLE entries ADD COLUMN IF NOT EXISTS platforms TEXT")
+        cur.close()
+
+
 def init_schema():
     backend = _resolve_backend()
     schema_file = "schema_sqlite.sql" if backend == "sqlite" else "schema_postgres.sql"
@@ -128,3 +144,4 @@ def init_schema():
             cur.execute(schema_sql)
             cur.close()
         _ensure_last_active_column(db, backend)
+        _ensure_platforms_column(db, backend)
