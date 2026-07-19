@@ -12,6 +12,7 @@ bp = Blueprint("board", __name__, url_prefix="/board")
 
 ALLOWED_MEDIA_TYPES = {"movie", "tv", "anime"}
 ALLOWED_STATUSES = {"wishlist", "watched"}
+KNOWN_PLATFORMS = ["Prime", "Netflix", "Hotstar", "YouTube", "Downloaded", "Zee5"]
 ALLOWED_SORTS = {
     "title_asc": "title COLLATE NOCASE ASC",
     "title_desc": "title COLLATE NOCASE DESC",
@@ -43,6 +44,7 @@ def dashboard():
     q = request.args.get("q", "").strip()
     status = request.args.get("status", "")
     media_type = request.args.get("media_type", "")
+    platform = request.args.get("platform", "")
     sort = request.args.get("sort", "title_asc")
 
     conditions = ["user_id = ?"]
@@ -57,6 +59,9 @@ def dashboard():
     if media_type in ALLOWED_MEDIA_TYPES:
         conditions.append("media_type = ?")
         params.append(media_type)
+    if platform in KNOWN_PLATFORMS:
+        conditions.append("LOWER(platforms) LIKE ?")
+        params.append(f"%{platform.lower()}%")
 
     order_by = _order_by_clause(sort)
     query = f"""
@@ -97,7 +102,8 @@ def dashboard():
         entries=entries,
         counts=counts,
         media_breakdown=media_breakdown,
-        q=q, status=status, media_type=media_type, sort=sort,
+        q=q, status=status, media_type=media_type, platform=platform, sort=sort,
+        known_platforms=KNOWN_PLATFORMS,
     )
 
 

@@ -60,11 +60,11 @@
     />
 
     <div class="dashboard__tabs" role="tablist" aria-label="Filter by status">
-      <a href="{{ url_for('board.dashboard', q=q, media_type=media_type, sort=sort) }}"
+      <a href="{{ url_for('board.dashboard', q=q, media_type=media_type, platform=platform, sort=sort) }}"
          class="dashboard__tab {{ 'dashboard__tab--active' if not status }}">All</a>
-      <a href="{{ url_for('board.dashboard', q=q, status='wishlist', media_type=media_type, sort=sort) }}"
+      <a href="{{ url_for('board.dashboard', q=q, status='wishlist', media_type=media_type, platform=platform, sort=sort) }}"
          class="dashboard__tab {{ 'dashboard__tab--active' if status == 'wishlist' }}">Wishlist</a>
-      <a href="{{ url_for('board.dashboard', q=q, status='watched', media_type=media_type, sort=sort) }}"
+      <a href="{{ url_for('board.dashboard', q=q, status='watched', media_type=media_type, platform=platform, sort=sort) }}"
          class="dashboard__tab {{ 'dashboard__tab--active' if status == 'watched' }}">Watched</a>
     </div>
     <input type="hidden" name="status" value="{{ status }}" />
@@ -74,6 +74,13 @@
       <option value="movie" {{ 'selected' if media_type == 'movie' }}>Films</option>
       <option value="tv" {{ 'selected' if media_type == 'tv' }}>Series</option>
       <option value="anime" {{ 'selected' if media_type == 'anime' }}>Anime</option>
+    </select>
+
+    <select name="platform" aria-label="Filter by platform" onchange="document.getElementById('filter-form').submit()">
+      <option value="" {{ 'selected' if not platform }}>All platforms</option>
+      {% for p in known_platforms %}
+        <option value="{{ p }}" {{ 'selected' if platform == p }}>{{ p }}</option>
+      {% endfor %}
     </select>
 
     <select name="sort" aria-label="Sort entries" onchange="document.getElementById('filter-form').submit()">
@@ -86,7 +93,7 @@
     </select>
   </form>
 
-  {% if q or status or media_type %}
+  {% if q or status or media_type or platform %}
     <p class="dashboard__results-count">
       {{ entries|length }} result{{ '' if entries|length == 1 else 's' }}
       {%- if q %} for "{{ q }}"{% endif %}
